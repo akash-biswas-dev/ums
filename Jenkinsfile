@@ -6,6 +6,7 @@ pipeline {
 
   stages { 
     stage('Checkout SCM'){
+      agent {label 'ums-test'}
       steps{
         checkout scm
       }

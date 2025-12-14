@@ -1,5 +1,5 @@
 // Shared library defination. 
-@Library('base-libraries') _
+@Library('BaseLibraries') _
 pipeline {
   // Set the agent as none so in each stage have to specify the agent.
   agent none

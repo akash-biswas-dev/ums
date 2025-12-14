@@ -5,9 +5,14 @@ pipeline {
   agent none
 
   stages { 
-   stage('Testing') {
+    stage('Checkout SCM'){
+      checkout scm
+    }
 
-    agent { label 'ums-test'} // Agents must specify in each stage.
+    stage('Testing') {
+
+      agent { label 'ums-test'} // Agents must specify in each stage.
+     
       steps{ 
         echo 'Start running Automated tests.'
         script{
@@ -18,7 +23,7 @@ pipeline {
         }
       } 
     } 
-   stage('Build the image') {
+    stage('Build the image') {
      steps {
         echo 'Start cloning the reposity'
       }

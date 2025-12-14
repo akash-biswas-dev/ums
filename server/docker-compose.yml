@@ -1,0 +1,9 @@
+services:
+  mysql:
+    container_name: ums-db-dev
+    image: mysql:8.0.44-debian
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=ums-db

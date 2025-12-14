@@ -1,0 +1,29 @@
+services:
+  test-agent:
+    container_name: ums-test
+    image: biswaskash/maven-agent:3.9.11
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM62ZFyBTRyr6tbGzpZcxfsBtofJQ0XXq3+VQspzLY4I akash@workstation
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=ums-db-test
+      - MYSQL_HOST=ums-test-db
+    networks:
+      - db-network
+      - jenkins-network
+  test-db:
+    container_name: ums-test-db
+    image: mysql:8.0.44-debian
+    environment:
+      - MYSQL_ROOT_PASSWORD=user
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=ums-db-test
+    networks:
+      - db-network
+networks:
+  db-network:
+    driver: bridge
+  jenkins-network:
+    external: true
+    name: jenkins-global-network

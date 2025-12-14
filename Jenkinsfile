@@ -7,6 +7,7 @@ pipeline {
     stage('Testing') {
       
       agent { label 'ums-test'} // Agents must specify in each stage.
+      
       steps{ 
         echo 'Start running Automated tests.'
         script{
@@ -15,7 +16,7 @@ pipeline {
           def branch = env.GIT_BRANCH
           echo "${url} and ${branch}"
           // cloneRepo(url,branch) // Shared library call.
-        }
+        
       } 
     } 
     stage('Build the image') {

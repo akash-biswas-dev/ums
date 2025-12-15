@@ -24,7 +24,5 @@ pipeline {
      steps {
         echo 'Start cloning the reposity'
       }
-   }
-
-  } 
+   }  
 }

@@ -12,11 +12,7 @@ pipeline {
       steps{ 
         echo 'Start running Automated tests.'
         script{
-          // This variables are passed by jenkins it self.
-          def url = env.GIT_URL
-          def branch = env.BRANCH_NAME
-          echo "${url} and ${branch}"         
-          // cloneRepo(url,branch) // Shared library call.
+          cloneRepo.useEnv() //Shared library call.
         }  
       }
     }

@@ -3,7 +3,8 @@
 pipeline {
   // Set the agent as none so in each stage have to specify the agent.
   agent none
-  
+  stages{
+
     stage('Testing') {
       
       agent { label 'ums-test'} // Agents must specify in each stage.
@@ -25,4 +26,5 @@ pipeline {
         echo 'Start cloning the reposity'
       }
    }  
+  }
 }

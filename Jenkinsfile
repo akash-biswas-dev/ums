@@ -17,8 +17,9 @@ pipeline {
           echo "${url} and ${branch}"
           // cloneRepo(url,branch) // Shared library call.
         
-      } 
-    } 
+        }  
+      }
+    }
     stage('Build the image') {
      steps {
         echo 'Start cloning the reposity'

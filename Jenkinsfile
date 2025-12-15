@@ -14,14 +14,14 @@ pipeline {
         script{
           // This variables are passed by jenkins it self.
           def url = env.GIT_URL
-          def branch = env.GIT_BRANCH
-          echo "${url} and ${branch}"
-          // cloneRepo(url,branch) // Shared library call.
-        
+          def branch = env.BRANCH_NAME
+         
+          cloneRepo(url,branch) // Shared library call.
         }  
       }
     }
     stage('Build the image') {
+      agent {label 'docker'}
      steps {
         echo 'Start cloning the reposity'
       }

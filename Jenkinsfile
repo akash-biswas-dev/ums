@@ -1,14 +1,15 @@
 // Shared library defination. 
 @Library('BaseLibraries') _
 pipeline {
+  environment{
+    DOCKER_IMAGE_NAME = "biswasakash/ums"
+    DOCKER_IMAGE_VERSION = "0.0.1"
+  }
+
+
   // Set the agent as none so in each stage have to specify the agent.
   agent none
   stages{
-    environment{
-      DOCKER_IMAGE_NAME = "biswasakash/ums"
-      DOCKER_IMAGE_VERSION = "0.0.1"
-    }
-
     stage('Testing') {
       
       agent { label 'ums-test'} // Agents must specify in each stage.

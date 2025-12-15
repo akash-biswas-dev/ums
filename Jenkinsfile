@@ -15,8 +15,8 @@ pipeline {
           // This variables are passed by jenkins it self.
           def url = env.GIT_URL
           def branch = env.BRANCH_NAME
-         
-          cloneRepo(url,branch) // Shared library call.
+          echo "${url} and ${branch}"         
+          // cloneRepo(url,branch) // Shared library call.
         }  
       }
     }

@@ -4,3 +4,11 @@ jwt:
   secret: B7CEFEB0F4E33DB6E2D661DF5615E6D33D3D2C6E05C504B49E4993762C20A75D
 server:
   port: 8501
+spring:
+  datasource:
+    username: dev
+    password: password
+    url: jdbc:mysql://localhost:3306/ums-db
+  jpa:
+    hibernate:
+      ddl-auto: validate

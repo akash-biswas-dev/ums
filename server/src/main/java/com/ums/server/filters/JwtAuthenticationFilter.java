@@ -1,5 +1,6 @@
 package com.ums.server.filters;
 
+import com.ums.server.exceptions.JwtSessionExpiredException;
 import com.ums.server.exceptions.JwtTokenExpiredException;
 import com.ums.server.service.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -37,30 +38,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        Optional<Cookie> authorizationCookie = Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals("token")).findFirst();
 
-        if (authorizationCookie.isEmpty()) {
+        String authorization = request.getHeader("Authorization");
+
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        Cookie cookie = authorizationCookie.get();
+        String token = authorization.substring(7);
 
-        String authorization = cookie.getValue();
+        UserDetails user = jwtService.extractAuthentication(token);
 
-        UserDetails authentication = jwtService.extractAuthentication(authorization);
-
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                authentication.getUsername(), "no-password", authentication.getAuthorities()
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                user.getUsername(), "no-password", user.getAuthorities()
         );
-        token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(token);
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         filterChain.doFilter(request, response);
     }

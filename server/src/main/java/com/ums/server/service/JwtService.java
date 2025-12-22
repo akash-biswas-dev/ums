@@ -8,5 +8,11 @@ public interface JwtService {
 
     <T extends UserDetails> String generateToken(T userDetails);
 
+    String generateSession(String userId, Boolean rememberMe);
+
     Integer getAge();
+
+    Integer getMaxAge();
+
+    String extractUserId(String session);
 }

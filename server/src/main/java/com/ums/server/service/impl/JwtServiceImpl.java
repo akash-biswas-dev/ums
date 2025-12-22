@@ -23,7 +23,9 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService {
     private final String issuer;
     private final String secret;
+    private final Integer accessWindow;
     private final Long expiration;
+    private final Long maxExpiration;
 
     private static final String PERMISSION = "permissions";
 
@@ -34,8 +36,9 @@ public class JwtServiceImpl implements JwtService {
         try {
             claims = extractAllClaims(token);
         } catch (ExpiredJwtException e) {
-            throw new JwtTokenExpiredException("Token has expired");
-        }catch (Exception e) {
+            System.out.println(e.getHeader());
+            throw new JwtTokenExpiredException("Token Expired.");
+        } catch (Exception e) {
             throw new JwtException("Invalid token");
         }
         String subject = claims.getSubject();
@@ -58,7 +61,14 @@ public class JwtServiceImpl implements JwtService {
 
         Map<String, Object> map = new HashMap<>();
         map.put(PERMISSION, permissions);
-        return buildToken(map, subject);
+
+        return buildToken(map, subject, accessWindow * 1000L);
+    }
+
+    @Override
+    public String generateSession(String userId, Boolean rememberMe) {
+        Long age = rememberMe ? maxExpiration : expiration;
+        return buildToken(new HashMap<>(), userId, age);
     }
 
     @Override
@@ -66,6 +76,15 @@ public class JwtServiceImpl implements JwtService {
         return (int) expiration.longValue() / 1000;
     }
 
+    @Override
+    public Integer getMaxAge() {
+        return (int) maxExpiration.longValue() / 1000;
+    }
+
+    @Override
+    public String extractUserId(String session) {
+        return extractClaim(session, Claims::getSubject);
+    }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         return claimsResolver.apply(extractAllClaims(token));
@@ -84,14 +103,15 @@ public class JwtServiceImpl implements JwtService {
                 .getBody();
     }
 
-    private String buildToken(Map<String, Object> claims, String userId) {
+    private String buildToken(Map<String, Object> claims, String userId, Long age) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userId)
                 .setIssuer(issuer)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .setExpiration(new Date(System.currentTimeMillis() + age))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
 }

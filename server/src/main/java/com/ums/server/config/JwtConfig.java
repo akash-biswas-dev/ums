@@ -18,7 +18,9 @@ public class JwtConfig {
     JwtService jwtService() {
         String secret = environment.getProperty("jwt.secret");
         String issuer = environment.getProperty("jwt.issuer");
+        Integer accessWindow = 60 * 5; // 5 min
         Long expiration = environment.getProperty("jwt.expiration", Long.class);
-        return new JwtServiceImpl(issuer, secret, expiration);
+        Long maxExpiration = environment.getProperty("jwt.refresh-expiration", Long.class);
+        return new JwtServiceImpl(issuer, secret, accessWindow, expiration, maxExpiration);
     }
 }

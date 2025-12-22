@@ -7,13 +7,12 @@ import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.JwtAuthenticationFilter;
 import com.ums.server.service.JwtService;
 import com.ums.server.service.UserService;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Header;
-import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,11 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SecureRestEndpoint.class)
 @Import({SecurityConfig.class, JwtAuthenticationFilter.class, FilterChainExceptionHandler.class})
@@ -56,16 +53,21 @@ class SecuredRestEndpointTest {
 
     @Test
     void shouldSendRedirectWhenTheTokenIsExpired() throws Exception {
-        when(jwtService.extractAuthentication(any())).thenThrow(new JwtTokenExpiredException("Token has expired"));
 
-        mockMvc.perform(get(BASE_URL)
-                        .cookie(new Cookie("token", "a-long-token")))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(header().string("Location", "/auth"));
+        String token = "a-long-token";
+        when(jwtService.extractAuthentication(token)).thenThrow(new JwtTokenExpiredException("Token has expired"));
+
+        mockMvc.perform(get(BASE_URL).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.error").value("TOKEN_EXPIRED"));
+
     }
 
     @Test
     void shouldGet403WhenAccessSecuredEndpointWithoutEnoughPermission() throws Exception {
+
+        String token = "a-long-token";
 
         UserDetails user = User.builder()
                 .username("user")
@@ -73,9 +75,10 @@ class SecuredRestEndpointTest {
                 .authorities(List.of())
                 .build();
 
-        when(jwtService.extractAuthentication(any())).thenReturn(user);
+        when(jwtService.extractAuthentication(token)).thenReturn(user);
+
         mockMvc.perform(get(BASE_URL + "/permission")
-                        .cookie(new Cookie("token", "a-long-token")))
+                        .header(HttpHeaders.AUTHORIZATION,String.format("Bearer %s",token)))
                 .andExpect(status().isForbidden());
     }
 

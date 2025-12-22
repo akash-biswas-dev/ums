@@ -15,20 +15,22 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
-class JwtAuthenticationFilterTest {
+public class RefreshTokenAuthenticationFilterTest {
 
     @Mock
     private JwtService jwtService;
+
+    @InjectMocks
+    private RefreshTokenAuthenticationFilter filter;
 
     @Mock
     private HttpServletRequest request;
@@ -39,19 +41,10 @@ class JwtAuthenticationFilterTest {
     @Mock
     private FilterChain filterChain;
 
-    @InjectMocks
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    private UserDetails user;
 
     @BeforeEach
-    void beforeEach() {
+    void setUp() {
         SecurityContextHolder.clearContext();
-        user = User.builder()
-                .username("user")
-                .password("password")
-                .authorities("user:read", "user:write")
-                .build();
     }
 
     @AfterEach
@@ -59,18 +52,27 @@ class JwtAuthenticationFilterTest {
         SecurityContextHolder.clearContext();
     }
 
+
     @Test
-    void shouldUpdateTheSecurityContext() throws ServletException, IOException {
+    void shouldUpdateSecurityContextWhenPassValidCookie() throws ServletException, IOException {
         String token = "a-long-token";
+        String userId = UUID.randomUUID().toString();
 
-        when(request.getHeader("Authorization")).thenReturn(String.format("Bearer %s", token));
-        when(jwtService.extractAuthentication(token)).thenReturn(user);
+        when(request.getRequestURI()).thenReturn("/api/v1/refresh-token");
+        when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("session", token)});
+        when(jwtService.extractUserId(token)).thenReturn(userId);
 
-        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+        filter.doFilter(request, response, filterChain);
 
         SecurityContext context = SecurityContextHolder.getContext();
         assertNotNull(context);
         assertNotNull(context.getAuthentication());
     }
 
+    @Test
+    void shouldNotAppliedOtherThatRefreshTokenPath() throws ServletException, IOException {
+        when(request.getRequestURI()).thenReturn("/api/v1/secured");
+//      If the doFilterInternal method executes then throw JwtException but the requestURI is preventing the execution of the method.
+        assertDoesNotThrow(() -> filter.doFilter(request, response, filterChain));
+    }
 }

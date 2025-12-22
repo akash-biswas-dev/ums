@@ -24,6 +24,8 @@ class JwtServiceTest {
         this.jwtService = new JwtServiceImpl(
                 "localhost",
                 "59703373367639792F423F452848284D625165546857",
+                300,
+                86400000L,
                 86400000L
         );
         this.user = User.builder()
@@ -58,9 +60,11 @@ class JwtServiceTest {
         JwtService tempService = new JwtServiceImpl(
                 "localhost",
                 "59703373367639792F423F452848284D625165546857",
-                100L);
+                1,
+                100L,
+                300L);
         String token = tempService.generateToken(user);
-        Thread.sleep(200);
+        Thread.sleep(2000);
 
         assertThrows(JwtTokenExpiredException.class, () -> {
             tempService.extractAuthentication(token);
@@ -72,10 +76,23 @@ class JwtServiceTest {
         JwtService tempService = new JwtServiceImpl(
                 "localhost",
                 "452848284D62516554685759703373367639792F423F",
+                300,
+                86400000L,
                 86400000L);
         String token = jwtService.generateToken(user);
         assertThrows(JwtException.class, () -> {
             tempService.extractAuthentication(token);
         });
+    }
+
+    @Test
+    void shouldCreateATokenOnlyWithSubjectUsername() {
+
+        String token = jwtService.generateSession(user.getUsername(),true);
+
+        String subject = jwtService.extractUserId(token);
+
+        assertEquals(user.getUsername(), subject);
+
     }
 }

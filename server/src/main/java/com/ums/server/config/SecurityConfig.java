@@ -2,6 +2,7 @@ package com.ums.server.config;
 
 import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.JwtAuthenticationFilter;
+import com.ums.server.filters.RefreshTokenAuthenticationFilter;
 import com.ums.server.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class SecurityConfig {
 
     private final FilterChainExceptionHandler exceptionHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RefreshTokenAuthenticationFilter refreshTokenFilter;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
@@ -59,6 +61,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(exceptionHandler, LogoutFilter.class)
+                .addFilterBefore(refreshTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> {
                     authorize

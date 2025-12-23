@@ -27,12 +27,12 @@ public class AuthServiceImpl implements AuthService {
         final Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    userCredentials.emailOrEnrollmentId(),
+                    userCredentials.email(),
                     userCredentials.password()
             ));
         } catch (AuthenticationException exception) {
             log.error("User not authenticated with user id: {} with message: {} ",
-                    userCredentials.emailOrEnrollmentId(),
+                    userCredentials.email(),
                     exception.getMessage());
             throw new BadCredentialsException("Invalid Credentials");
         }

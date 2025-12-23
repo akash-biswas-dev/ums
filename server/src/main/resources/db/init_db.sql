@@ -162,7 +162,7 @@ CREATE TABLE building
     name             VARCHAR(100) NOT NULL,
     address_id       VARCHAR(50)  NOT NULL,
     institution_code VARCHAR(50)  NOT NULL,
-    FOREIGN KEY (address_id) REFERENCES address (id) ,
+    FOREIGN KEY (address_id) REFERENCES address (id),
     FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE
 );
 
@@ -266,6 +266,7 @@ CREATE TABLE faculty_in_institution
 
 CREATE TABLE students_in_institution
 (
+    registration      VARCHAR(20) PRIMARY KEY,
     student_id        VARCHAR(36) NOT NULL,
     program_code      VARCHAR(50) NOT NULL,
     institution_code  VARCHAR(50) NOT NULL,

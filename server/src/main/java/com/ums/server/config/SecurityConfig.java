@@ -47,6 +47,7 @@ public class SecurityConfig {
             "/assets/**",
             "/vite.svg",
             "/favicon.ico",
+            "/api/v1/auth/**"
     };
 
     @Bean

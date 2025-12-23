@@ -10,27 +10,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@Controller
-@RequestMapping("/auth")
+@RestController
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping
-    public String auth() {
-        return "auth";
-    }
 
     @PostMapping
-    public void login(UserCredentials userCredential,
+    public void login(@RequestBody UserCredentials userCredential,
                       HttpServletResponse response,
                       @RequestParam(name = "rememberMe", required = false, defaultValue = "false") Boolean rememberMe) throws IOException {
 

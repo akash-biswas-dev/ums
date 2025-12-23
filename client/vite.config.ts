@@ -4,6 +4,15 @@ import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server:{
+    proxy:{
+      "/backend":{
+        target:"http://localhost:8501",
+        changeOrigin:true,
+        rewrite:(path) => path.replace(/^\/backend/, '')
+      }
+    }
+  },
   plugins: [ 
     tailwindcss(),
     react({

@@ -1,6 +1,7 @@
 package com.ums.server.models;
 
 
+import jakarta.persistence.*;
 import lombok.*;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
@@ -11,24 +12,42 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 
 @Getter
 @Setter
 @Builder
+@Entity
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 public class UmsUsers implements UserDetails {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String enrollmentId;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Gender gender;
-    private LocalDate joinedDate;
+
+    @Column(nullable = false, name = "joined_on")
+    private LocalDate joinedOn;
+
+    @Column(nullable = false, name = "is_locked")
     private Boolean isLocked;
+
+    @Column(nullable = false, name = "is_enabled")
     private Boolean isEnabled;
 
 
+    @Transient
     private List<String> authorities;
 
     @Override
@@ -42,7 +61,7 @@ public class UmsUsers implements UserDetails {
         return this.password;
     }
 
-    @NonNull
+    @NullMarked
     @Override
     public String getUsername() {
         return this.id;

@@ -35,6 +35,9 @@ class AuthServiceTest {
         private JwtService jwtService;
 
         @Mock
+        private UserService userService;
+
+        @Mock
         private AuthenticationException exception;
 
         private AuthService authService;
@@ -44,7 +47,7 @@ class AuthServiceTest {
         @BeforeEach
         void beforeEach() {
             this.user = UmsUsers.builder().email("email").password("password").build();
-            this.authService = new AuthServiceImpl(authenticationManager, jwtService);
+            this.authService = new AuthServiceImpl(authenticationManager, jwtService, userService);
         }
 
         @Test

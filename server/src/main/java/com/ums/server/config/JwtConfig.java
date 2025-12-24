@@ -16,11 +16,11 @@ public class JwtConfig {
 
     @Bean
     JwtService jwtService() {
-        String secret = environment.getProperty("jwt.secret");
-        String issuer = environment.getProperty("jwt.issuer");
+        String secret = environment.getProperty("ums.jwt.secret");
+        String issuer = environment.getProperty("ums.jwt.issuer");
         Integer accessWindow = 60 * 5; // 5 min
-        Long expiration = environment.getProperty("jwt.expiration", Long.class);
-        Long maxExpiration = environment.getProperty("jwt.refresh-expiration", Long.class);
+        Long expiration = environment.getProperty("ums.jwt.expiration", Long.class);
+        Long maxExpiration = environment.getProperty("ums.jwt.refresh-expiration", Long.class);
         return new JwtServiceImpl(issuer, secret, accessWindow, expiration, maxExpiration);
     }
 }

@@ -13,13 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class SecureRestEndpoint {
 
     @GetMapping
-    public ResponseEntity<String> hello(){
+    public ResponseEntity<String> hello() {
         return ResponseEntity.ok("hello");
     }
 
     @GetMapping("/permission")
     @PreAuthorize(value = "hasRole('user:read')")
-    public ResponseEntity<String> helloWithPermission(){
+    public ResponseEntity<String> helloWithPermission() {
         return ResponseEntity.ok("Hello with permission");
+    }
+
+    @GetMapping("/error")
+    public ResponseEntity<String> helloWithError() {
+        throw new RuntimeException("Unknown Exception");
     }
 }

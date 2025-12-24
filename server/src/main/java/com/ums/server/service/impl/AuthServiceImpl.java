@@ -2,13 +2,13 @@ package com.ums.server.service.impl;
 
 import com.ums.server.dtos.JwtCookie;
 import com.ums.server.dtos.requests.UserCredentials;
+import com.ums.server.exceptions.InvalidCredentialsException;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.service.AuthService;
 import com.ums.server.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
             log.error("User not authenticated with user id: {} with message: {} ",
                     userCredentials.email(),
                     exception.getMessage());
-            throw new BadCredentialsException("Invalid Credentials");
+            throw new InvalidCredentialsException("Invalid Credentials");
         }
         UmsUsers user = (UmsUsers) authentication.getPrincipal();
 

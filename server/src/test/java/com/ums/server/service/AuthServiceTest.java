@@ -2,6 +2,7 @@ package com.ums.server.service;
 
 import com.ums.server.dtos.JwtCookie;
 import com.ums.server.dtos.requests.UserCredentials;
+import com.ums.server.exceptions.InvalidCredentialsException;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -77,7 +78,7 @@ class AuthServiceTest {
 
             UserCredentials credentials = new UserCredentials(user.getEmail(), user.getPassword());
 
-            assertThrows(BadCredentialsException.class, () -> authService.generateJwtCookie(credentials, false));
+            assertThrows(InvalidCredentialsException.class, () -> authService.generateJwtCookie(credentials, false));
 
         }
 

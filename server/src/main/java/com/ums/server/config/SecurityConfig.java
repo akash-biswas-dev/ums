@@ -1,5 +1,6 @@
 package com.ums.server.config;
 
+import com.ums.server.exceptions.InvalidAuthenticationException;
 import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.JwtAuthenticationFilter;
 import com.ums.server.filters.RefreshTokenAuthenticationFilter;
@@ -72,8 +73,8 @@ public class SecurityConfig {
                 })
                 .exceptionHandling(exception -> {
                     exception.authenticationEntryPoint((req, resp, e) -> {
-                        log.error("Exception occurred while authenticating the user: {} at path {}",e.getMessage(),req.getRequestURI());
-                        resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        log.error("Exception occurred while authenticating the user: {} at path {}", e.getMessage(), req.getRequestURI());
+                        throw new InvalidAuthenticationException("Invalid authentication attempt");
                     });
                 })
                 .build();

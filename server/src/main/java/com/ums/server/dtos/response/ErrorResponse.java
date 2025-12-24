@@ -1,7 +1,9 @@
 package com.ums.server.dtos.response;
 
+import com.ums.server.dtos.ErrorCode;
+
 public record ErrorResponse(
-        String error,
+        ErrorCode error,
         String description
-){
+) {
 }

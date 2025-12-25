@@ -20,13 +20,13 @@ DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS role;
 DROP TABLE IF EXISTS stuff_salary;
 -- This two only works if teh tables already created.
-#
-# ALTER TABLE institution
-#     DROP FOREIGN KEY fk_director_stuff_profile;
-# ALTER TABLE institution
-#     DROP FOREIGN KEY fk_principal_stuff_profile;
-DROP TABLE IF EXISTS stuff_profile;
+
+/* ALTER TABLE institution
+     DROP FOREIGN KEY fk_director_stuff_profile;
+ ALTER TABLE institution
+     DROP FOREIGN KEY fk_principal_stuff_profile*/;
 DROP TABLE IF EXISTS stuff_details;
+DROP TABLE IF EXISTS stuff_profile;
 DROP TABLE IF EXISTS salary;
 DROP TABLE IF EXISTS institution;
 DROP TABLE IF EXISTS student_profile;
@@ -78,13 +78,6 @@ CREATE TABLE role_permissions
     PRIMARY KEY (role_name, permission)
 );
 
-CREATE TABLE user_permissions
-(
-    user_id    VARCHAR(36),
-    permission VARCHAR(200),
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    PRIMARY KEY (user_id, permission)
-);
 
 CREATE TABLE institution
 (
@@ -100,6 +93,15 @@ CREATE TABLE stuff_profile
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 
 );
+
+CREATE TABLE user_permissions
+(
+    stuff_id    VARCHAR(36),
+    permission VARCHAR(200),
+    FOREIGN KEY (stuff_id) REFERENCES stuff_profile(user_id) ON DELETE CASCADE,
+    PRIMARY KEY (stuff_id, permission)
+);
+
 
 CREATE TABLE stuff_details
 (

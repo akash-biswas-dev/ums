@@ -14,6 +14,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserPermissionId implements Serializable {
 
-    private String userId;
+    private String stuffId;
     private String permission;
 }

@@ -11,8 +11,8 @@ public class UserPermission {
     private UserPermissionId userPermissionId;
 
 
-    @MapsId("userId")
+    @MapsId("stuffId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UmsUsers users;
+    @JoinColumn(name = "stuff_id", referencedColumnName = "user_id")
+    private StuffProfile stuffProfile;
 }

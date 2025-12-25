@@ -25,9 +25,9 @@ public class Institution {
     private LocalDate createdOn;
 
     @ManyToOne
-    @JoinColumn(name = "principal", referencedColumnName = "user_id")
+    @JoinColumn(name = "principal", referencedColumnName = "id")
     private StuffProfile principal;
     @ManyToOne
-    @JoinColumn(name = "director", referencedColumnName = "user_id")
+    @JoinColumn(name = "director", referencedColumnName = "id")
     private StuffProfile director;
 }

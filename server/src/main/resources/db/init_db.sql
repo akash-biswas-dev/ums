@@ -19,7 +19,14 @@ DROP TABLE IF EXISTS role_permissions;
 DROP TABLE IF EXISTS user_role;
 DROP TABLE IF EXISTS role;
 DROP TABLE IF EXISTS stuff_salary;
+-- This two only works if teh tables already created.
+#
+# ALTER TABLE institution
+#     DROP FOREIGN KEY fk_director_stuff_profile;
+# ALTER TABLE institution
+#     DROP FOREIGN KEY fk_principal_stuff_profile;
 DROP TABLE IF EXISTS stuff_profile;
+DROP TABLE IF EXISTS stuff_details;
 DROP TABLE IF EXISTS salary;
 DROP TABLE IF EXISTS institution;
 DROP TABLE IF EXISTS student_profile;
@@ -49,7 +56,7 @@ CREATE TABLE users
 
 CREATE TABLE role
 (
-    name        VARCHAR(100) PRIMARY KEY ,
+    name        VARCHAR(100) PRIMARY KEY,
     description VARCHAR(500)
 );
 
@@ -79,45 +86,47 @@ CREATE TABLE user_permissions
     PRIMARY KEY (user_id, permission)
 );
 
-CREATE TABLE student_profile
-(
-    user_id           VARCHAR(36) PRIMARY KEY,
-    first_name        VARCHAR(100) NOT NULL,
-    middle_name       VARCHAR(100) NOT NULL,
-    last_name         VARCHAR(100) NOT NULL,
-    date_of_birth     DATE         NOT NULL,
-    current_address   VARCHAR(36)  NOT NULL,
-    permanent_address VARCHAR(36)  NOT NULL,
-    is_alumni         BOOLEAN      NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (current_address) REFERENCES address (id),
-    FOREIGN KEY (permanent_address) REFERENCES address (id)
-);
-
-
 CREATE TABLE institution
 (
     code       VARCHAR(50) PRIMARY KEY,
     name       VARCHAR(200) NOT NULL UNIQUE,
-    created_on DATE         NOT NULL,
-    principal  VARCHAR(36),
-    director   VARCHAR(36),
-    FOREIGN KEY (principal) REFERENCES users (id) ON DELETE SET NULL,
-    FOREIGN KEY (director) REFERENCES users (id) ON DELETE SET NULL
+    created_on DATE         NOT NULL
 );
 
 CREATE TABLE stuff_profile
 (
-    user_id          VARCHAR(36),
-    institution_code VARCHAR(50),
+    user_id VARCHAR(36) PRIMARY KEY,
+    -- TODO: define the stuff profile fields.
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+
+);
+
+CREATE TABLE stuff_details
+(
+    id               VARCHAR(36) PRIMARY KEY,
+    stuff_id         VARCHAR(36) NOT NULL,
+    institution_code VARCHAR(50) NOT NULL,
     stuff_type       ENUM ('ACADEMIC','NON_ACADEMIC','LAB_OPERATOR','ENGINEER'),
-    PRIMARY KEY (user_id, institution_code, stuff_type),
-    starting_from    DATE NOT NULL,
+    UNIQUE (stuff_id, institution_code, stuff_type),
+    starting_from    DATE        NOT NULL,
     ending_at        DATE,
     FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
-    -- TODO: define the stuff profile fields.
+    FOREIGN KEY (stuff_id) REFERENCES stuff_profile (user_id) ON DELETE CASCADE
 );
+
+ALTER TABLE institution
+    ADD COLUMN principal VARCHAR(36);
+ALTER TABLE institution
+    ADD CONSTRAINT fk_principal_stuff_profile
+        FOREIGN KEY (principal) REFERENCES stuff_details (id) ON DELETE SET NULL;
+
+
+ALTER TABLE institution
+    ADD COLUMN director VARCHAR(36);
+ALTER TABLE institution
+    ADD CONSTRAINT fk_director_stuff_profile
+        FOREIGN KEY (director) REFERENCES stuff_details (id) ON DELETE SET NULL;
+
 
 CREATE TABLE salary
 (
@@ -129,9 +138,10 @@ CREATE TABLE stuff_salary
 (
     salary_id     BIGINT,
     stuff_id      VARCHAR(36),
+
     academic_year VARCHAR(9),
     FOREIGN KEY (salary_id) REFERENCES salary (id) ON DELETE CASCADE,
-    FOREIGN KEY (stuff_id) REFERENCES stuff_profile (user_id) ON DELETE CASCADE
+    FOREIGN KEY (stuff_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 
@@ -155,6 +165,7 @@ CREATE TABLE user_education
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (education_id) REFERENCES education (id) ON DELETE CASCADE
 );
+
 
 
 CREATE TABLE building
@@ -249,20 +260,34 @@ CREATE TABLE exams
 -- This table store records about the academic faculties who teaches what on which institution from to till a date.
 CREATE TABLE faculty_in_institution
 (
-    id               VARCHAR(36) PRIMARY KEY,
-    faculty_id       VARCHAR(36) NOT NULL,
-    institution_code VARCHAR(50) NOT NULL,
-    program_code     VARCHAR(50) NOT NULL,
-    department_code  VARCHAR(50) NOT NULL,
-    subject_code     VARCHAR(50) NOT NULL,
-    start_date       DATE        NOT NULL,
-    end_date         DATE,
-    type             ENUM ('Permanent','Guest'),
-    FOREIGN KEY (faculty_id) REFERENCES stuff_profile (user_id) ON DELETE CASCADE,
-    FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE,
+    id              VARCHAR(36) PRIMARY KEY,
+    faculty_id      VARCHAR(36) NOT NULL,
+    program_code    VARCHAR(50) NOT NULL,
+    department_code VARCHAR(50) NOT NULL,
+    subject_code    VARCHAR(50) NOT NULL,
+    start_date      DATE        NOT NULL,
+    end_date        DATE,
+    type            ENUM ('Permanent','Guest'),
+    FOREIGN KEY (faculty_id) REFERENCES stuff_details (id) ON DELETE CASCADE,
     FOREIGN KEY (program_code) REFERENCES program (code) ON DELETE CASCADE,
     FOREIGN KEY (department_code) REFERENCES department (code) ON DELETE CASCADE,
     FOREIGN KEY (subject_code) REFERENCES subject (code) ON DELETE CASCADE
+);
+
+
+CREATE TABLE student_profile
+(
+    user_id           VARCHAR(36) PRIMARY KEY,
+    first_name        VARCHAR(100) NOT NULL,
+    middle_name       VARCHAR(100) NOT NULL,
+    last_name         VARCHAR(100) NOT NULL,
+    date_of_birth     DATE         NOT NULL,
+    current_address   VARCHAR(36)  NOT NULL,
+    permanent_address VARCHAR(36)  NOT NULL,
+    is_alumni         BOOLEAN      NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (current_address) REFERENCES address (id),
+    FOREIGN KEY (permanent_address) REFERENCES address (id)
 );
 
 CREATE TABLE students_in_institution

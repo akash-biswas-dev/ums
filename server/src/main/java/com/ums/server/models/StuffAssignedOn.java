@@ -17,7 +17,7 @@ import java.io.Serializable;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
-public class StuffProfileId implements Serializable {
+public class StuffAssignedOn implements Serializable {
 
     private String userId;
     private String institutionCode;

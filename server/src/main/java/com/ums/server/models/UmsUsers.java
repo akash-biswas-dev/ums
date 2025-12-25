@@ -11,8 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.Set;
 
 
 @Getter
@@ -48,12 +47,15 @@ public class UmsUsers implements UserDetails {
 
 
     @Transient
-    private List<String> authorities;
+    @Getter(AccessLevel.NONE)
+    private Set<UmsPermissions> authorities;
 
     @Override
     @NullMarked
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities.stream().map(SimpleGrantedAuthority::new).toList();
+        return this.authorities.stream()
+                .map(umsPermissions -> new SimpleGrantedAuthority(umsPermissions.name()))
+                .toList();
     }
 
     @Override

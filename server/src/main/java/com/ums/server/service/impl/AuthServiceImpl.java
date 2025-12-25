@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthToken generateAuthTokens(String userId) {
-        UserDetails users = userService.getUserDetailsById(userId);
+        UserDetails users = userService.getUmsUserWithPermissions(userId);
         String token = jwtService.generateToken(users);
         return new AuthToken(token);
     }

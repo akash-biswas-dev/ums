@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 public class RolePermission {
 
     @EmbeddedId
-    private RolePermissionId rolePermissionId;
+    private RolePermissionId id;
 
     @MapsId(value = "roleName")
     @JoinColumn(name = "role_name", referencedColumnName = "name")
     @ManyToOne(fetch = FetchType.LAZY)
     private Role role;
 
-    public RolePermission(String roleName, String permission) {
-        this.rolePermissionId = new RolePermissionId(roleName, permission);
+    public RolePermission(String roleName, UmsPermissions permission) {
+        this.id = new RolePermissionId(roleName, permission);
     }
 }

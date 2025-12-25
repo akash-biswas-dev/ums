@@ -65,7 +65,7 @@ CREATE TABLE user_role
     user_id       VARCHAR(36),
     role_name     VARCHAR(100),
     PRIMARY KEY (user_id, role_name),
-    starting_from DATE,
+    starting_from DATE NOT NULL ,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (role_name) REFERENCES role (name) ON DELETE CASCADE
 );

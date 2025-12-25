@@ -2,6 +2,8 @@ package com.ums.server.models;
 
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -15,5 +17,6 @@ import java.io.Serializable;
 public class RolePermissionId implements Serializable {
 
     private String roleName;
-    private String permission;
+    @Enumerated(EnumType.STRING)
+    private UmsPermissions permission;
 }

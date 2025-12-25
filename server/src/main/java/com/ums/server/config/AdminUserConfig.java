@@ -3,6 +3,7 @@ package com.ums.server.config;
 
 import com.ums.server.models.Role;
 import com.ums.server.models.RolePermission;
+import com.ums.server.models.UmsPermissions;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.repository.RolePermissionRepository;
 import com.ums.server.repository.RoleRepository;
@@ -28,7 +29,7 @@ public class AdminUserConfig {
     private final RolePermissionRepository rolePermissionRepository;
     private final RoleRepository roleRepository;
 
-    private static final List<String> ADMIN_PERMISSION = List.of(
+    private static final List<UmsPermissions> ADMIN_PERMISSION = List.of(
 
     );
 

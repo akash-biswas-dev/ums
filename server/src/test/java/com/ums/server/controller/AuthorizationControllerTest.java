@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({SecurityConfig.class, FilterChainExceptionHandler.class, RefreshAuthorizationFilter.class})
 class AuthorizationControllerTest {
 
-    private static final String BASE_URL = "/api/v1/refresh-token";
+    private static final String BASE_URL = "/api/v1/authorize";
 
     @Autowired
     private MockMvc mockMvc;

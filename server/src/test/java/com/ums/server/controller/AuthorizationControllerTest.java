@@ -3,7 +3,7 @@ package com.ums.server.controller;
 import com.ums.server.config.SecurityConfig;
 import com.ums.server.dtos.response.AuthToken;
 import com.ums.server.filters.FilterChainExceptionHandler;
-import com.ums.server.filters.RefreshTokenAuthenticationFilter;
+import com.ums.server.filters.RefreshAuthorizationFilter;
 import com.ums.server.service.AuthService;
 import com.ums.server.service.JwtService;
 import com.ums.server.service.UserService;
@@ -22,9 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@WebMvcTest(value = RefreshTokenController.class)
-@Import({SecurityConfig.class, FilterChainExceptionHandler.class, RefreshTokenAuthenticationFilter.class})
-class RefreshTokenControllerTest {
+@WebMvcTest(value = AuthorizationController.class)
+@Import({SecurityConfig.class, FilterChainExceptionHandler.class, RefreshAuthorizationFilter.class})
+class AuthorizationControllerTest {
 
     private static final String BASE_URL = "/api/v1/refresh-token";
 

@@ -6,5 +6,5 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService extends UserDetailsService {
 
-    UmsUsers getUmsUserWithPermissions(String userId);
+    UmsUsers getUmsUserWithPermissionsById(String userId);
 }

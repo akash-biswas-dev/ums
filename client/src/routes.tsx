@@ -5,6 +5,7 @@ import Auth from "./pages/Auth";
 const routes = createBrowserRouter([
   {
     path: "/ums",
+    element: <App />,
     children: [
       {
         index: true,
@@ -22,7 +23,7 @@ const routes = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Navigate to="" replace />,
+    element: <Navigate to="/ums" replace />,
   },
 ]);
 

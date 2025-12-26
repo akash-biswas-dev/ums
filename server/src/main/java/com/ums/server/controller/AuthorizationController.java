@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/refresh-token")
-public class RefreshTokenController {
+@RequestMapping(value = "/api/v1/authorize")
+public class AuthorizationController {
 
     private final AuthService authService;
 

@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UmsUsers getUmsUserWithPermissions(String userId) {
+    public UmsUsers getUmsUserWithPermissionsById(String userId) {
 
         Optional<UmsUsers> userOptional = userRepository.findById(userId);
 

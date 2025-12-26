@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class RefreshTokenAuthenticationFilterTest {
+public class RefreshAuthorizationFilterTest {
 
     @Mock
     private JwtService jwtService;
 
     @InjectMocks
-    private RefreshTokenAuthenticationFilter filter;
+    private RefreshAuthorizationFilter filter;
 
     @Mock
     private HttpServletRequest request;
@@ -58,7 +58,7 @@ public class RefreshTokenAuthenticationFilterTest {
         String token = "a-long-token";
         String userId = UUID.randomUUID().toString();
 
-        when(request.getRequestURI()).thenReturn("/api/v1/refresh-token");
+        when(request.getRequestURI()).thenReturn("/api/v1/authorize");
         when(request.getCookies()).thenReturn(new Cookie[]{new Cookie("session", token)});
         when(jwtService.extractUserId(token)).thenReturn(userId);
 

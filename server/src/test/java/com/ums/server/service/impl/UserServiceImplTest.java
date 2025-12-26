@@ -95,7 +95,7 @@ class UserServiceImplTest {
 
             when(userPermissionRepository.findById_StuffId(user.getId())).thenReturn(List.of());
 
-            UmsUsers users = userServiceImpl.getUmsUserWithPermissions(user.getId());
+            UmsUsers users = userServiceImpl.getUmsUserWithPermissionsById(user.getId());
 
             Set<UmsPermissions> expectedPermissions = new HashSet<>();
 
@@ -121,7 +121,7 @@ class UserServiceImplTest {
 
             when(userPermissionRepository.findById_StuffId(user.getId())).thenReturn(getPermissionProjection(permissions));
 
-            UmsUsers users = userServiceImpl.getUmsUserWithPermissions(user.getId());
+            UmsUsers users = userServiceImpl.getUmsUserWithPermissionsById(user.getId());
 
             assertEquals(users.getAuthorities().size(), permissions.size());
         }
@@ -159,7 +159,7 @@ class UserServiceImplTest {
             expectedPermissions.addAll(rolePermissions);
             expectedPermissions.addAll(userPermissions);
 
-            UmsUsers users = userServiceImpl.getUmsUserWithPermissions(user.getId());
+            UmsUsers users = userServiceImpl.getUmsUserWithPermissionsById(user.getId());
 
             assertEquals(expectedPermissions.size(), users.getAuthorities().size());
 
@@ -174,7 +174,7 @@ class UserServiceImplTest {
 
             when(userPermissionRepository.findById_StuffId(user.getId())).thenReturn(List.of());
 
-            UmsUsers users = userServiceImpl.getUmsUserWithPermissions(user.getId());
+            UmsUsers users = userServiceImpl.getUmsUserWithPermissionsById(user.getId());
 
             assertEquals(0, users.getAuthorities().size());
         }
@@ -185,7 +185,5 @@ class UserServiceImplTest {
                     .map((permission) -> (PermissionProjection) () -> permission)
                     .toList();
         }
-
-
     }
 }

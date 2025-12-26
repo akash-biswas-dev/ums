@@ -26,7 +26,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RefreshTokenAuthenticationFilter extends OncePerRequestFilter {
+public class RefreshAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
@@ -63,6 +63,6 @@ public class RefreshTokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        return !path.equals("/api/v1/refresh-token");
+        return !path.equals("/api/v1/authorize");
     }
 }

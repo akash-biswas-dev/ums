@@ -3,9 +3,8 @@ package com.ums.server.config;
 import com.ums.server.exceptions.InvalidAuthenticationException;
 import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.JwtAuthenticationFilter;
-import com.ums.server.filters.RefreshTokenAuthenticationFilter;
+import com.ums.server.filters.RefreshAuthorizationFilter;
 import com.ums.server.service.UserService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -32,23 +31,17 @@ public class SecurityConfig {
 
     private final FilterChainExceptionHandler exceptionHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final RefreshTokenAuthenticationFilter refreshTokenFilter;
+    private final RefreshAuthorizationFilter refreshTokenFilter;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     private static final String[] WHITELIST = {
-            "/",
             "/ums/**",
-            "/index.html",
-            "/about",
             "/auth/**",
-            "/css/**",
-            "/js/**",
-            "/images/**",
+            "/api/v1/auth/**",
             "/assets/**",
             "/vite.svg",
             "/favicon.ico",
-            "/api/v1/auth/**"
     };
 
     @Bean

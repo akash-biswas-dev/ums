@@ -1,11 +1,11 @@
 package com.ums.server.service;
 
-import com.ums.server.dtos.JwtCookie;
+import com.ums.server.dtos.JwtAuthorization;
 import com.ums.server.dtos.requests.UserCredentials;
-import com.ums.server.dtos.response.AuthToken;
+import com.ums.server.dtos.response.Authorization;
 
 public interface AuthService {
-    JwtCookie generateJwtCookie(UserCredentials userCredentials, Boolean rememberMe);
+    JwtAuthorization generateJwtCookie(UserCredentials userCredentials, Boolean rememberMe);
 
-    AuthToken generateAuthTokens(String userId);
+    Authorization generateAuthTokens(String userId);
 }

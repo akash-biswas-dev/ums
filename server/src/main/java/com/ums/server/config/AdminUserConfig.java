@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,9 +30,7 @@ public class AdminUserConfig {
     private final RolePermissionRepository rolePermissionRepository;
     private final RoleRepository roleRepository;
 
-    private static final List<UmsPermissions> ADMIN_PERMISSION = List.of(
-
-    );
+    private static final List<UmsPermissions> ADMIN_PERMISSION = Arrays.stream(UmsPermissions.values()).toList();
 
     @Bean
     CommandLineRunner commandLineRunner(Environment environment) {

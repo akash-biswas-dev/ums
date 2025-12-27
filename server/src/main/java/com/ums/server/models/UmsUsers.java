@@ -4,13 +4,9 @@ package com.ums.server.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.jspecify.annotations.NullMarked;
-import org.jspecify.annotations.Nullable;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 
@@ -21,7 +17,7 @@ import java.util.Set;
 @Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-public class UmsUsers implements UserDetails {
+public class UmsUsers {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -31,6 +27,31 @@ public class UmsUsers implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+    private String firstName;
+
+    private String lastName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "phone_country")
+    private CountryCode phoneCountry;
+
+    private String phone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "alternate_phone_country")
+    private CountryCode alternatePhoneCountry;
+
+    @Column(name = "alternate_phone")
+    private String alternatePhone;
+
+    @OneToOne
+    @JoinColumn(name = "current_address", referencedColumnName = "id")
+    private Address currentAddress;
+
+    @OneToOne
+    @JoinColumn(name = "permanent_address",referencedColumnName = "id")
+    private Address permanentAddress;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -45,37 +66,13 @@ public class UmsUsers implements UserDetails {
     @Column(nullable = false, name = "is_enabled")
     private Boolean isEnabled;
 
-
     @Transient
     @Getter(AccessLevel.NONE)
-    private Set<UmsPermissions> authorities;
-
-    @Override
-    @NullMarked
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities.stream()
-                .map(umsPermissions -> new SimpleGrantedAuthority(umsPermissions.name()))
-                .toList();
-    }
-
-    @Override
-    public @Nullable String getPassword() {
-        return this.password;
-    }
+    private Set<UmsPermissions> permissions;
 
     @NullMarked
-    @Override
-    public String getUsername() {
-        return this.id;
+    public List<UmsPermissions> getPermissions() {
+        return this.permissions.stream().toList();
     }
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return !this.isLocked;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.isEnabled;
-    }
 }

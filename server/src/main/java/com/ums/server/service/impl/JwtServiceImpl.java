@@ -2,6 +2,8 @@ package com.ums.server.service.impl;
 
 import com.ums.server.exceptions.JwtException;
 import com.ums.server.exceptions.JwtTokenExpiredException;
+import com.ums.server.models.UmsPermissions;
+import com.ums.server.models.UmsUsers;
 import com.ums.server.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,6 +18,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Key;
+import java.security.Permission;
 import java.util.*;
 import java.util.function.Function;
 
@@ -54,10 +57,10 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public <T extends UserDetails> String generateToken(T userDetails) {
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        List<String> permissions = authorities.stream().map(GrantedAuthority::getAuthority).toList();
-        String subject = userDetails.getUsername();
+    public String generateToken(UmsUsers umsUsers) {
+        List<UmsPermissions> authorities = umsUsers.getPermissions();
+        List<String> permissions = authorities.stream().map(UmsPermissions::name).toList();
+        String subject = umsUsers.getId();
 
         Map<String, Object> map = new HashMap<>();
         map.put(PERMISSION, permissions);

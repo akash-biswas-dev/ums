@@ -1,5 +1,3 @@
 static/assets/*
 static/index.html
 static/vite.svg
-node_modules/
-static/css/output.css

@@ -2,6 +2,8 @@ package com.ums.server.service;
 
 import com.ums.server.exceptions.JwtException;
 import com.ums.server.exceptions.JwtTokenExpiredException;
+import com.ums.server.models.UmsPermissions;
+import com.ums.server.models.UmsUsers;
 import com.ums.server.service.impl.JwtServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Set;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -17,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class JwtServiceTest {
 
     private JwtService jwtService;
-    private UserDetails user;
+    private UmsUsers user;
 
     @BeforeEach
     void beforeEach() {
@@ -28,24 +33,23 @@ class JwtServiceTest {
                 86400000L,
                 86400000L
         );
-        this.user = User.builder()
-                .username("akash")
+        this.user = UmsUsers.builder()
+                .id(UUID.randomUUID().toString())
+                .email("admin@gmail.com")
                 .password("password")
-                .authorities("user:read", "user:write", "user:delete")
-                .accountExpired(false)
-                .accountLocked(false)
-                .disabled(false)
-                .credentialsExpired(false)
+                .permissions(Set.of(UmsPermissions.DIRECTOR_WRITE, UmsPermissions.STUDENT_UPDATE))
+                .isEnabled(false)
+                .isLocked(false)
                 .build();
     }
 
     @Test
-    void shouldCreateTokenWithSubjectUsername() {
+    void shouldCreateTokenWithSubjectUserId() {
         String token = jwtService.generateToken(user);
         UserDetails extractedUser = jwtService.extractAuthentication(token);
 
-        assertEquals(user.getUsername(), extractedUser.getUsername());
-        assertEquals(user.getAuthorities().size(), extractedUser.getAuthorities().size());
+        assertEquals(user.getId(), extractedUser.getUsername());
+        assertEquals(user.getPermissions().size(), extractedUser.getAuthorities().size());
     }
 
     @Test
@@ -88,11 +92,11 @@ class JwtServiceTest {
     @Test
     void shouldCreateATokenOnlyWithSubjectUsername() {
 
-        String token = jwtService.generateSession(user.getUsername(),true);
+        String token = jwtService.generateSession(user.getId(), true);
 
         String subject = jwtService.extractUserId(token);
 
-        assertEquals(user.getUsername(), subject);
+        assertEquals(user.getId(), subject);
 
     }
 }

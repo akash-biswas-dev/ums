@@ -21,10 +21,12 @@ DROP TABLE IF EXISTS role;
 DROP TABLE IF EXISTS stuff_salary;
 -- This two only works if teh tables already created.
 
-/* ALTER TABLE institution
-     DROP FOREIGN KEY fk_director_stuff_profile;
- ALTER TABLE institution
-     DROP FOREIGN KEY fk_principal_stuff_profile*/;
+# ALTER TABLE institution
+#     DROP FOREIGN KEY fk_director_stuff_profile;
+# ALTER TABLE institution
+#     DROP FOREIGN KEY fk_principal_stuff_profile;
+
+
 DROP TABLE IF EXISTS stuff_details;
 DROP TABLE IF EXISTS stuff_profile;
 DROP TABLE IF EXISTS salary;
@@ -35,7 +37,7 @@ DROP TABLE IF EXISTS address;
 
 CREATE TABLE address
 (
-    id          VARCHAR(50) PRIMARY KEY,
+    id          VARCHAR(36) PRIMARY KEY,
     building_no VARCHAR(20) NOT NULL,
     street      VARCHAR(100),
     city        VARCHAR(50),
@@ -45,13 +47,23 @@ CREATE TABLE address
 );
 CREATE TABLE users
 (
-    id         VARCHAR(36) PRIMARY KEY,
-    password   VARCHAR(100)        NOT NULL,
-    email      VARCHAR(100) UNIQUE NOT NULL,
-    gender     VARCHAR(10)         NOT NULL,
-    is_locked  BOOLEAN             NOT NULL,
-    is_enabled BOOLEAN             NOT NULL,
-    joined_on  DATE                NOT NULL
+    id                      VARCHAR(36) PRIMARY KEY,
+    email                   VARCHAR(100) UNIQUE NOT NULL,
+    password                VARCHAR(100)        NOT NULL,
+    first_name              VARCHAR(50),
+    middle_name             VARCHAR(50),
+    last_name               VARCHAR(50),
+    date_of_birth           DATE,
+    phone_country           VARCHAR(5),
+    phone                   VARCHAR(15),
+    alternate_phone_country VARCHAR(5),
+    alternate_phone         VARCHAR(15),
+    current_address         VARCHAR(36),
+    permanent_address       VARCHAR(36),
+    gender                  VARCHAR(10)         NOT NULL,
+    is_locked               BOOLEAN             NOT NULL,
+    is_enabled              BOOLEAN             NOT NULL,
+    joined_on               DATE                NOT NULL
 );
 
 CREATE TABLE role
@@ -65,7 +77,7 @@ CREATE TABLE user_role
     user_id       VARCHAR(36),
     role_name     VARCHAR(100),
     PRIMARY KEY (user_id, role_name),
-    starting_from DATE NOT NULL ,
+    starting_from DATE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (role_name) REFERENCES role (name) ON DELETE CASCADE
 );
@@ -96,9 +108,9 @@ CREATE TABLE stuff_profile
 
 CREATE TABLE user_permissions
 (
-    stuff_id    VARCHAR(36),
+    stuff_id   VARCHAR(36),
     permission VARCHAR(200),
-    FOREIGN KEY (stuff_id) REFERENCES stuff_profile(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (stuff_id) REFERENCES stuff_profile (user_id) ON DELETE CASCADE,
     PRIMARY KEY (stuff_id, permission)
 );
 
@@ -174,7 +186,7 @@ CREATE TABLE building
 (
     id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     name             VARCHAR(100) NOT NULL,
-    address_id       VARCHAR(50)  NOT NULL,
+    address_id       VARCHAR(36)  NOT NULL,
     institution_code VARCHAR(50)  NOT NULL,
     FOREIGN KEY (address_id) REFERENCES address (id),
     FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE
@@ -277,21 +289,6 @@ CREATE TABLE faculty_in_institution
 );
 
 
-CREATE TABLE student_profile
-(
-    user_id           VARCHAR(36) PRIMARY KEY,
-    first_name        VARCHAR(100) NOT NULL,
-    middle_name       VARCHAR(100) NOT NULL,
-    last_name         VARCHAR(100) NOT NULL,
-    date_of_birth     DATE         NOT NULL,
-    current_address   VARCHAR(36)  NOT NULL,
-    permanent_address VARCHAR(36)  NOT NULL,
-    is_alumni         BOOLEAN      NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (current_address) REFERENCES address (id),
-    FOREIGN KEY (permanent_address) REFERENCES address (id)
-);
-
 CREATE TABLE students_in_institution
 (
     registration      VARCHAR(20) PRIMARY KEY,
@@ -304,7 +301,7 @@ CREATE TABLE students_in_institution
     term_id           BIGINT,
     passing_year      DATE,
     FOREIGN KEY (term_id) REFERENCES term (id) ON DELETE CASCADE,
-    FOREIGN KEY (student_id) REFERENCES student_profile (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (program_code) REFERENCES program (code) ON DELETE CASCADE,
     FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE,
     FOREIGN KEY (department_code) REFERENCES department (code) ON DELETE CASCADE,
@@ -334,7 +331,7 @@ CREATE TABLE student_upcoming_exams
     PRIMARY KEY (exam_id, student_id, held_on),
     FOREIGN KEY (exam_id) REFERENCES exams (id) ON DELETE CASCADE,
     FOREIGN KEY (venue_id) REFERENCES building (id) ON DELETE CASCADE,
-    FOREIGN KEY (student_id) REFERENCES student_profile (user_id) ON DELETE CASCADE
+    FOREIGN KEY (student_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 
@@ -347,6 +344,6 @@ CREATE TABLE student_result
     held_on      DATE,
     status       ENUM ('NOT_ATTEMPTED','ATTEMPTED','CANCELLED'),
     PRIMARY KEY (student_id, exam_id, held_on, attempt_id),
-    FOREIGN KEY (student_id) REFERENCES student_profile (user_id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (exam_id) REFERENCES exams (id) ON DELETE CASCADE
 );

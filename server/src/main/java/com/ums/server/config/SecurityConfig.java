@@ -32,28 +32,22 @@ public class SecurityConfig {
     private final FilterChainExceptionHandler exceptionHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final RefreshAuthorizationFilter refreshTokenFilter;
-    private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
     private static final String[] WHITELIST = {
             "/ums/**",
             "/auth/**",
             "/api/v1/auth/**",
             "/assets/**",
-            "/vite.svg",
-            "/favicon.ico",
+            "/vite.svg"
     };
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) {
 
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder);
         return http
                 .httpBasic(HttpBasicConfigurer::disable)
                 .csrf(CsrfConfigurer::disable)
                 .cors(CorsConfigurer::disable)
-                .authenticationProvider(authenticationProvider)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(exceptionHandler, LogoutFilter.class)
                 .addFilterBefore(refreshTokenFilter, UsernamePasswordAuthenticationFilter.class)
@@ -70,6 +64,10 @@ public class SecurityConfig {
                         throw new InvalidAuthenticationException("Invalid authentication attempt");
                     });
                 })
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/logout")
+                        .deleteCookies("session")
+                        .logoutSuccessUrl("/auth"))
                 .build();
     }
 }

@@ -36,19 +36,31 @@ public class UserServiceImpl implements UserService {
 
     @NonNull
     @Override
-    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
-        return userRepository.findByEmailIgnoreCase(username).orElseThrow(() -> new UsernameNotFoundException(username));
+    public UmsUsers loadUserByEmail(@NonNull String email) throws UserNotFoundException{
+        Optional<UmsUsers> userOptional = userRepository.findByEmailIgnoreCase(email);
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException(email);
+        }
+        return updateUserPermissions(userOptional.get());
     }
 
     @Override
-    public UmsUsers getUmsUserWithPermissionsById(String userId) {
+    public UmsUsers loadUserById(@NonNull String userId) throws UsernameNotFoundException {
 
         Optional<UmsUsers> userOptional = userRepository.findById(userId);
 
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException(userId);
         }
-//      Fetch all the roles user have.
+        return updateUserPermissions(userOptional.get());
+    }
+
+    private UmsUsers updateUserPermissions(UmsUsers umsUsers) {
+
+        String userId = umsUsers.getId();
+
+        //      Fetch all the roles user have.
         List<RoleNameProjection> userRoles = userRoleRepository.findById_UserId(userId);
 
 //      Use a hash set to have distinct permission otherwise will get duplicate permission.
@@ -73,9 +85,7 @@ public class UserServiceImpl implements UserService {
 
         permissions.addAll(userPermissions);
 
-        UmsUsers umsUsers = userOptional.get();
-
-        umsUsers.setAuthorities(permissions);
+        umsUsers.setPermissions(permissions);
 
         return umsUsers;
     }

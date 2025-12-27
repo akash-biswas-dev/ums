@@ -1,7 +1,7 @@
 package com.ums.server.controller;
 
 
-import com.ums.server.dtos.response.AuthToken;
+import com.ums.server.dtos.response.Authorization;
 import com.ums.server.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,9 +19,9 @@ public class AuthorizationController {
     private final AuthService authService;
 
     @PostMapping
-    public ResponseEntity<AuthToken> refreshToken(Authentication authentication) {
+    public ResponseEntity<Authorization> authorize(Authentication authentication) {
         String userId = (String) authentication.getPrincipal();
-        AuthToken tokens = authService.generateAuthTokens(userId);
+        Authorization tokens = authService.generateAuthTokens(userId);
         return new ResponseEntity<>(tokens, HttpStatus.CREATED);
     }
 }

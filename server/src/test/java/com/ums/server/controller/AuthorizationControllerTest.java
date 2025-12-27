@@ -1,7 +1,8 @@
 package com.ums.server.controller;
 
 import com.ums.server.config.SecurityConfig;
-import com.ums.server.dtos.response.AuthToken;
+import com.ums.server.dtos.response.Authorization;
+import com.ums.server.dtos.response.UserResponse;
 import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.RefreshAuthorizationFilter;
 import com.ums.server.service.AuthService;
@@ -47,14 +48,22 @@ class AuthorizationControllerTest {
     void generateTokenWhenSessionCookiePresent() throws Exception {
         String token = "a-long-token";
         String userId = "user-id";
-        String accessToken = "access-token";
+        String authorization = "access-token";
+
+        UserResponse userResponse = new UserResponse(
+                "Akash",
+                "Biswas"
+        );
+
 
         when(jwtService.extractUserId(token)).thenReturn(userId);
-        when(authService.generateAuthTokens(userId)).thenReturn(new AuthToken(accessToken));
+        when(authService.generateAuthTokens(userId)).thenReturn(new Authorization(authorization, userResponse));
 
         mockMvc.perform(post(BASE_URL).cookie(new Cookie("session", token)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.token").value(accessToken));
+                .andExpect(jsonPath("$.authorization").value(authorization))
+                .andExpect(jsonPath("$.user.firstName").value(userResponse.firstName()))
+                .andExpect(jsonPath("$.user.lastName").value(userResponse.lastName()));
 
     }
 

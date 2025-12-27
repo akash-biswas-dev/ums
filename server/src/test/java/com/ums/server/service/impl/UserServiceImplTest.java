@@ -95,14 +95,14 @@ class UserServiceImplTest {
 
             when(userPermissionRepository.findById_StuffId(user.getId())).thenReturn(List.of());
 
-            UmsUsers users = userServiceImpl.getUmsUserWithPermissionsById(user.getId());
+            UmsUsers users = userServiceImpl.loadUserById(user.getId());
 
             Set<UmsPermissions> expectedPermissions = new HashSet<>();
 
             expectedPermissions.addAll(adminPermissions);
             expectedPermissions.addAll(directorPermission);
 
-            assertEquals(expectedPermissions.size(), users.getAuthorities().size());
+            assertEquals(expectedPermissions.size(), users.getPermissions().size());
         }
 
         @Test
@@ -121,9 +121,9 @@ class UserServiceImplTest {
 
             when(userPermissionRepository.findById_StuffId(user.getId())).thenReturn(getPermissionProjection(permissions));
 
-            UmsUsers users = userServiceImpl.getUmsUserWithPermissionsById(user.getId());
+            UmsUsers users = userServiceImpl.loadUserById(user.getId());
 
-            assertEquals(users.getAuthorities().size(), permissions.size());
+            assertEquals(users.getPermissions().size(), permissions.size());
         }
 
         @Test
@@ -159,9 +159,9 @@ class UserServiceImplTest {
             expectedPermissions.addAll(rolePermissions);
             expectedPermissions.addAll(userPermissions);
 
-            UmsUsers users = userServiceImpl.getUmsUserWithPermissionsById(user.getId());
+            UmsUsers users = userServiceImpl.loadUserById(user.getId());
 
-            assertEquals(expectedPermissions.size(), users.getAuthorities().size());
+            assertEquals(expectedPermissions.size(), users.getPermissions().size());
 
         }
 
@@ -174,9 +174,9 @@ class UserServiceImplTest {
 
             when(userPermissionRepository.findById_StuffId(user.getId())).thenReturn(List.of());
 
-            UmsUsers users = userServiceImpl.getUmsUserWithPermissionsById(user.getId());
+            UmsUsers users = userServiceImpl.loadUserById(user.getId());
 
-            assertEquals(0, users.getAuthorities().size());
+            assertEquals(0, users.getPermissions().size());
         }
 
         private List<PermissionProjection> getPermissionProjection(List<UmsPermissions> permissions) {

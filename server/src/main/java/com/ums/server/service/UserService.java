@@ -1,10 +1,15 @@
 package com.ums.server.service;
 
 
+import com.ums.server.exceptions.UserNotFoundException;
 import com.ums.server.models.UmsUsers;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import lombok.NonNull;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public interface UserService extends UserDetailsService {
+public interface UserService  {
 
-    UmsUsers getUmsUserWithPermissionsById(String userId);
+
+    UmsUsers loadUserByEmail(@NonNull String email) throws UserNotFoundException;
+
+    UmsUsers loadUserById(@NonNull String userId) throws UsernameNotFoundException;
 }

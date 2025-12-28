@@ -4,9 +4,11 @@ package com.ums.server.models;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "role_permissions")
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class RolePermission {

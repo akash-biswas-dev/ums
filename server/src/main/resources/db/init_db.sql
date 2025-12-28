@@ -21,11 +21,10 @@ DROP TABLE IF EXISTS role;
 DROP TABLE IF EXISTS stuff_salary;
 -- This two only works if teh tables already created.
 
-# ALTER TABLE institution
-#     DROP FOREIGN KEY fk_director_stuff_profile;
-# ALTER TABLE institution
-#     DROP FOREIGN KEY fk_principal_stuff_profile;
-
+ALTER TABLE institution
+    DROP FOREIGN KEY fk_director_stuff_profile;
+ALTER TABLE institution
+    DROP FOREIGN KEY fk_principal_stuff_profile;
 
 DROP TABLE IF EXISTS stuff_details;
 DROP TABLE IF EXISTS stuff_profile;
@@ -34,6 +33,7 @@ DROP TABLE IF EXISTS institution;
 DROP TABLE IF EXISTS student_profile;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS address;
+
 
 CREATE TABLE address
 (
@@ -60,7 +60,7 @@ CREATE TABLE users
     alternate_phone         VARCHAR(15),
     current_address         VARCHAR(36),
     permanent_address       VARCHAR(36),
-    gender                  VARCHAR(10)         NOT NULL,
+    gender                  VARCHAR(10),
     is_locked               BOOLEAN             NOT NULL,
     is_enabled              BOOLEAN             NOT NULL,
     joined_on               DATE                NOT NULL
@@ -82,13 +82,6 @@ CREATE TABLE user_role
     FOREIGN KEY (role_name) REFERENCES role (name) ON DELETE CASCADE
 );
 
-CREATE TABLE role_permissions
-(
-    role_name  VARCHAR(100),
-    permission VARCHAR(200),
-    FOREIGN KEY (role_name) REFERENCES role (name) ON DELETE CASCADE,
-    PRIMARY KEY (role_name, permission)
-);
 
 
 CREATE TABLE institution
@@ -104,14 +97,6 @@ CREATE TABLE stuff_profile
     -- TODO: define the stuff profile fields.
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 
-);
-
-CREATE TABLE user_permissions
-(
-    stuff_id   VARCHAR(36),
-    permission VARCHAR(200),
-    FOREIGN KEY (stuff_id) REFERENCES stuff_profile (user_id) ON DELETE CASCADE,
-    PRIMARY KEY (stuff_id, permission)
 );
 
 
@@ -212,6 +197,33 @@ CREATE TABLE department
     name VARCHAR(200) NOT NULL UNIQUE
 );
 
+create table role_permissions
+(
+    role_name        VARCHAR(100),
+    institution_code VARCHAR(50),
+    program_code     VARCHAR(50),
+    department_code  VARCHAR(50),
+    permission       VARCHAR(30),
+    FOREIGN KEY (role_name) REFERENCES role (name) ON DELETE CASCADE,
+    FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE,
+    FOREIGN KEY (program_code) REFERENCES program (code) ON DELETE CASCADE,
+    FOREIGN KEY (department_code) REFERENCES department (code) ON DELETE CASCADE,
+    PRIMARY KEY (role_name, permission, institution_code, program_code, department_code)
+);
+
+CREATE TABLE user_permission
+(
+    user_id          VARCHAR(36),
+    institution_code VARCHAR(50),
+    program_code     VARCHAR(50),
+    department_code  VARCHAR(50),
+    permission       VARCHAR(30),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE,
+    FOREIGN KEY (program_code) REFERENCES program (code) ON DELETE CASCADE,
+    FOREIGN KEY (department_code) REFERENCES department (code) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, permission, institution_code, program_code, department_code)
+);
 
 CREATE TABLE curriculum
 (

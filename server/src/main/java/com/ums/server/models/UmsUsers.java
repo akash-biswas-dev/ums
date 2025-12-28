@@ -28,8 +28,10 @@ public class UmsUsers {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "last_name")
     private String lastName;
 
     @Enumerated(EnumType.STRING)
@@ -53,7 +55,6 @@ public class UmsUsers {
     @JoinColumn(name = "permanent_address",referencedColumnName = "id")
     private Address permanentAddress;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 

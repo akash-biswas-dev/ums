@@ -3,10 +3,10 @@ ums:
     issuer: localhost
     expiration: 86400000
     secret: B7CEFEB0F4E33DB6E2D661DF5615E6D33D3D2C6E05C504B49E4993762C20A75D
-    refresh-expiration:
+    refresh-expiration: 1296000000
   admin:
     email: abc@email.com
-    role: admin
+    role: "Super Admin"
 
 server:
   port: 8501

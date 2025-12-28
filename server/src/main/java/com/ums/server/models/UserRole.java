@@ -32,12 +32,12 @@ public class UserRole {
     @Column(name = "starting_from", nullable = false)
     private LocalDate startingFrom;
 
-    public UserRole(String roleName, String userId, LocalDate startingFrom) {
+    public UserRole(String userId, String roleName, LocalDate startingFrom) {
         this.id = new UserRoleId(userId, roleName);
         this.startingFrom = startingFrom;
     }
 
-    public String getRoleName(){
+    public String getRoleName() {
         return this.id.getRoleName();
     }
 }

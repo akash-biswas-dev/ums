@@ -20,24 +20,18 @@ public class UserRole {
     private UserRoleId id;
 
     @ManyToOne
-    @MapsId("roleName")
-    @JoinColumn(name = "role_name", referencedColumnName = "name")
+    @MapsId("roleId")
+    @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
     @ManyToOne
     @MapsId("userId")
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    private StuffProfile stuff;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private UmsUsers users;
 
-    @Column(name = "starting_from", nullable = false)
-    private LocalDate startingFrom;
 
-    public UserRole(String userId, String roleName, LocalDate startingFrom) {
-        this.id = new UserRoleId(userId, roleName);
-        this.startingFrom = startingFrom;
+    public UserRole(String userId, String roleId) {
+        this.id = new UserRoleId(userId, roleId);
     }
 
-    public String getRoleName() {
-        return this.id.getRoleName();
-    }
 }

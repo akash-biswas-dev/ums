@@ -2,14 +2,13 @@ package com.ums.server.service;
 
 import com.ums.server.exceptions.JwtException;
 import com.ums.server.exceptions.JwtTokenExpiredException;
-import com.ums.server.models.UmsPermissions;
+import com.ums.server.models.permission.SystemPermissions;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.service.impl.JwtServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
@@ -37,7 +36,6 @@ class JwtServiceTest {
                 .id(UUID.randomUUID().toString())
                 .email("admin@gmail.com")
                 .password("password")
-                .permissions(Set.of(UmsPermissions.DIRECTOR_WRITE, UmsPermissions.STUDENT_UPDATE))
                 .isEnabled(false)
                 .isLocked(false)
                 .build();
@@ -49,7 +47,6 @@ class JwtServiceTest {
         UserDetails extractedUser = jwtService.extractAuthentication(token);
 
         assertEquals(user.getId(), extractedUser.getUsername());
-        assertEquals(user.getPermissions().size(), extractedUser.getAuthorities().size());
     }
 
     @Test

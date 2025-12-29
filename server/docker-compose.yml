@@ -9,3 +9,8 @@ services:
       - MYSQL_USER=dev
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=ums-db
+  redis:
+    container_name: ums-session-storage
+    image: redis:8.4.0-bookworm
+    ports:
+      - "6379:6379"

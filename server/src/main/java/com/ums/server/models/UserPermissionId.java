@@ -1,6 +1,8 @@
 package com.ums.server.models;
 
 
+import com.ums.server.models.permission.SystemPermissions;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,7 +18,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class UserPermissionId implements Serializable {
 
-    private String stuffId;
+    private String userId;
     @Enumerated(EnumType.STRING)
-    private UmsPermissions permission;
+    private SystemPermissions permission;
 }

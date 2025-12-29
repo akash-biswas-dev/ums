@@ -18,8 +18,8 @@ public class UserPermission {
     private UserPermissionId id;
 
 
-    @MapsId("stuffId")
+    @MapsId("userId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stuff_id", referencedColumnName = "user_id")
-    private StuffProfile stuffProfile;
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private UmsUsers users;
 }

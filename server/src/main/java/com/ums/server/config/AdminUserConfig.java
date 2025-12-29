@@ -2,6 +2,7 @@ package com.ums.server.config;
 
 
 import com.ums.server.models.*;
+import com.ums.server.models.permission.SystemPermissions;
 import com.ums.server.repository.RolePermissionRepository;
 import com.ums.server.repository.RoleRepository;
 import com.ums.server.repository.UserRepository;
@@ -34,7 +35,7 @@ public class AdminUserConfig {
     private final RolePermissionRepository rolePermissionRepository;
     private final RoleRepository roleRepository;
 
-    private static final List<UmsPermissions> ADMIN_PERMISSION = Arrays.stream(UmsPermissions.values()).toList();
+    private static final List<SystemPermissions> ADMIN_PERMISSION = Arrays.stream(SystemPermissions.values()).toList();
 
     @Bean
     CommandLineRunner commandLineRunner(Environment environment, UserRoleRepository userRoleRepository) {

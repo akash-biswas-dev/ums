@@ -15,8 +15,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class UserRoleId implements Serializable {
 
-    @Column(name = "user_id",length = 36)
+    @Column(length = 36)
     private String userId;
-    @Column(name = "role_name",length = 100)
-    private String roleName;
+    @Column(length = 36)
+    private String roleId;
 }

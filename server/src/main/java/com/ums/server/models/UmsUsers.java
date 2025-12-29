@@ -1,12 +1,15 @@
 package com.ums.server.models;
 
 
+import com.ums.server.models.permission.InstitutionPermission;
+import com.ums.server.models.permission.SystemPermissions;
 import jakarta.persistence.*;
 import lombok.*;
 import org.jspecify.annotations.NullMarked;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -52,7 +55,7 @@ public class UmsUsers {
     private Address currentAddress;
 
     @OneToOne
-    @JoinColumn(name = "permanent_address",referencedColumnName = "id")
+    @JoinColumn(name = "permanent_address", referencedColumnName = "id")
     private Address permanentAddress;
 
     @Enumerated(EnumType.STRING)
@@ -68,12 +71,19 @@ public class UmsUsers {
     private Boolean isEnabled;
 
     @Transient
-    @Getter(AccessLevel.NONE)
-    private Set<UmsPermissions> permissions;
+    @Setter(AccessLevel.NONE)
+    Set<SystemPermissions> systemPermissions;
 
-    @NullMarked
-    public List<UmsPermissions> getPermissions() {
-        return this.permissions.stream().toList();
+    @Transient
+    @Setter(AccessLevel.NONE)
+    Map<String, Set<InstitutionPermission>> institutePermission;
+
+    public void setPermissions(
+            Set<SystemPermissions> permissions,
+            Map<String, Set<InstitutionPermission>> institutePermission
+    ){
+        this.systemPermissions = permissions;
+        this.institutePermission = institutePermission;
     }
 
 }

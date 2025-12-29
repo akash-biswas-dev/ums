@@ -61,9 +61,9 @@ CREATE TABLE users
 
 CREATE TABLE user_permissions
 (
-    user_id           VARCHAR(36),
-    system_permission VARCHAR(30),
-    PRIMARY KEY (user_id, system_permission)
+    user_id    VARCHAR(36),
+    permission VARCHAR(30),
+    PRIMARY KEY (user_id, permission)
 );
 
 CREATE TABLE institution

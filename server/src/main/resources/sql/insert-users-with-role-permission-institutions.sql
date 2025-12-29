@@ -57,7 +57,7 @@ VALUES ('660e8400-e29b-41d4-a716-446655440001', 'VIEW_USERS'),
        ('660e8400-e29b-41d4-a716-446655440001', 'MANAGE_ROLES');
 
 -- Professor role (Institution-1)
-INSERT INTO role_permissions (role_id, permissions)
+INSERT INTO role_permissions (role_id, permission)
 VALUES ('660e8400-e29b-41d4-a716-446655440002', 'VIEW_USERS'), -- common with Admin
        ('660e8400-e29b-41d4-a716-446655440002', 'EDIT_USERS'), -- common with Admin
        ('660e8400-e29b-41d4-a716-446655440002', 'GRADE_STUDENTS'),

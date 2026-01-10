@@ -35,7 +35,7 @@ export function Sidebar() {
   return (
     <aside
       className={`h-screen flex flex-col transition-all duration-300 relative
-  ${collapsed ? "w-20" : "w-72"}
+  ${collapsed ? "w-20" : "w-58"}
   bg-primary/5 border-r border-primary/20`}
     >
       {/* Brand */}
@@ -138,7 +138,7 @@ export function Sidebar() {
           />
         </SidebarGroup>
 
-        <SidebarGroup title="Support" collapsed>
+        <SidebarGroup title="Support" collapsed={collapsed}>
           <SidebarItem
             to="/help"
             label="Help & Support"

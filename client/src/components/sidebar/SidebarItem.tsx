@@ -21,7 +21,7 @@ export function SidebarItem({
   const { pathname } = useLocation();
 
   const base =
-    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition";
+    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition text-nowrap";
 
   const indentStyle = indent ? "ml-4" : "";
 

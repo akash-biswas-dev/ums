@@ -16,6 +16,16 @@ import {
 import { useState } from "react";
 
 export function Sidebar() {
+  const { firstName, lastName, avatarUrl, position, gender } = {
+    firstName: "Akash",
+    lastName: "Biswas",
+    avatarUrl: null,
+    position: "Assistant Professor",
+    gender: "Male",
+  };
+
+  const avatar = gender === "Male" ? "male-avatar.png" : "female-avatar.png";
+
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   const handleLogout = () => {
@@ -29,16 +39,44 @@ export function Sidebar() {
   bg-primary/5 border-r border-primary/20`}
     >
       {/* Brand */}
-      <div className="px-5 py-5 border-b border-border overflow-clip">
-        <div className={`transition ${collapsed ? "hidden" : "block"} `}>
-          <h1 className="text-lg font-semibold text-primary">
-            University Portal
-          </h1>
-          <p className="text-xs text-text-muted mt-1">
-            Academic Management System
-          </p>
-        </div>
-        {collapsed && <Building />}
+      <div className="px-5 py-5 border-b border-border">
+        {collapsed ? (
+          <Building />
+        ) : (
+          <div className="overflow-clip">
+            <h1 className="text-lg font-semibold text-primary text-nowrap">
+              University Portal
+            </h1>
+            <p className="text-xs text-text-muted mt-1 text-nowrap">
+              Academic Management System
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* User Info */}
+      <div
+        className="px-4 py-4 flex items-center gap-3
+                border-b border-primary/20"
+      >
+        {/* Avatar */}
+        <img
+          src={avatarUrl || avatar}
+          alt="User Avatar"
+          className="h-10 w-10 rounded-full object-cover
+               ring-2 ring-primary/30"
+        />
+
+        {/* Name + Role */}
+        {!collapsed && (
+          <div className="leading-tight text-nowrap">
+            <p className="text-sm font-semibold text-text">
+              <span>{firstName + " "}</span>
+              <span>{lastName}</span>
+            </p>
+            <p className="text-xs text-text-muted">{position}</p>
+          </div>
+        )}
       </div>
 
       <button

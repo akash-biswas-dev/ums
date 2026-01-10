@@ -33,7 +33,7 @@ export default function Input({
   const [focus, setFocus] = useState(isFocus ? true : false);
 
   const classes = `w-full px-4 py-3 border border-gray-300 rounded-lg relative ${
-    focus ? "ring-2 ring-blue-900 border-transparent" : ""
+    focus ? "ring-2 ring-primary border-transparent" : ""
   } ${className}`;
 
   return (

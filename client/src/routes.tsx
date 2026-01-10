@@ -2,14 +2,15 @@ import { createBrowserRouter, Navigate } from "react-router";
 import App from "./App";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import Home from "./pages/HomePage";
 const routes = createBrowserRouter([
   {
-    path: "/ums",
+    path: "/",
     element: <App />,
     children: [
       {
         index: true,
-        element: <App />,
+        element: <Home />,
       },
       {
         path: "*",

@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+  --color-primary: oklch(37.9% 0.146 265.522); /* Indigo/Blue */
+  --color-primary-hover: oklch(42% 0.146 265.522);
+
+  --color-bg: oklch(98% 0.005 264.66);
+  --color-surface: oklch(100% 0 0);
+  --color-border: oklch(90% 0.01 264.66);
+
+  --color-text: oklch(21% 0.034 264.66);
+  --color-text-muted: oklch(50% 0.02 264.66);
+}
+
+html {
+  @apply bg-bg text-text antialiased;
+}

@@ -27,8 +27,9 @@ const AuthorizationManager = ({
 
   const { authorization } = use(authorizationPromise);
 
-  const [authorizarion, setAuthorization] =
-    useState<Authorization>(authorization);
+  const [authorizarion, setAuthorization] = useState<Authorization>({
+    token: "a-long-token",
+  });
 
   const { token } = authorizarion;
 

@@ -44,9 +44,7 @@ export default function Auth() {
       <main className="grow flex items-center justify-center px-4 py-12">
         <div className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome Back
-            </h2>
+            <h2 className="text-3xl font-bold mb-2">Welcome Back</h2>
             {error ? (
               <p className="text-red-600">{error}</p>
             ) : (

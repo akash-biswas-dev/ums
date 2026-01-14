@@ -59,6 +59,28 @@ CREATE TABLE users
     joined_on               DATE                NOT NULL
 );
 
+CREATE TABLE system_role
+(
+    id         VARCHAR(36) PRIMARY KEY,
+    role_name  VARCHAR(50) NOT NULL,
+    created_on DATE        NOT NULL
+);
+
+CREATE TABLE user_system_permission
+(
+    user_id        VARCHAR(36),
+    system_role_id VARCHAR(36),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (system_role_id) REFERENCES system_role (id) ON DELETE CASCADE
+);
+
+CREATE TABLE system_role_permission
+(
+    system_role_id    VARCHAR(36),
+    system_permission VARCHAR(50),
+    FOREIGN KEY (system_role_id) REFERENCES system_role (id) ON DELETE CASCADE
+);
+
 CREATE TABLE user_permissions
 (
     user_id           VARCHAR(36),
@@ -249,7 +271,7 @@ CREATE TABLE exams
     FOREIGN KEY (subject_code) REFERENCES subject (code) ON DELETE CASCADE
 );
 
--- This table store records about the academic faculties who teaches what on which institution from to till a date.
+-- This table store records about the academic faculties who teach what on which institution from to till a date.
 CREATE TABLE faculty_in_institution
 (
     id              VARCHAR(36) PRIMARY KEY,

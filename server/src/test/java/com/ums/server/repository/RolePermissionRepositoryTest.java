@@ -33,7 +33,7 @@ class RolePermissionRepositoryTest {
     class FetchAllPermissionsUserHaveWithInstitutions {
 
         @Test
-        @Sql(scripts = "/sql/insert-users-with-role-permission-institutions.sql")
+        @Sql(scripts = "/sql-scripts/insert-users-with-role-permission-institutions.sql")
         void fetchAllThePermissionsUserHaveInstitutionWise() {
             long count = userRepository.count();
             assertTrue(count > 0);

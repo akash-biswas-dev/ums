@@ -5,33 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 
-import java.time.LocalDate;
-
+@Entity
 @Getter
 @Setter
-@Entity
-@Table(name = "user_role")
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRole {
+@Table(name = "roles")
+public class UserRole{
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
+    private String roleName;
+    private String description;
 
-    @EmbeddedId
-    private UserRoleId id;
-
-    @ManyToOne
-    @MapsId("roleId")
-    @JoinColumn(name = "role_id", referencedColumnName = "id")
-    private Role role;
-
-    @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UmsUsers users;
-
-
-    public UserRole(String userId, String roleId) {
-        this.id = new UserRoleId(userId, roleId);
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "institution_code", referencedColumnName = "code")
+    private Institution institution;
 
 }

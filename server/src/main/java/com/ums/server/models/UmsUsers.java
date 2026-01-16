@@ -1,14 +1,13 @@
 package com.ums.server.models;
 
 
+import com.ums.server.models.address.CountryCode;
 import com.ums.server.models.permission.InstitutionPermission;
 import com.ums.server.models.permission.SystemPermissions;
 import jakarta.persistence.*;
 import lombok.*;
-import org.jspecify.annotations.NullMarked;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,8 +33,17 @@ public class UmsUsers {
     @Column(name = "first_name")
     private String firstName;
 
+    @Column(name = "middle_name")
+    private String middleName;
+
     @Column(name = "last_name")
     private String lastName;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "phone_country")
@@ -58,8 +66,6 @@ public class UmsUsers {
     @JoinColumn(name = "permanent_address", referencedColumnName = "id")
     private Address permanentAddress;
 
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
 
     @Column(nullable = false, name = "joined_on")
     private LocalDate joinedOn;
@@ -69,6 +75,9 @@ public class UmsUsers {
 
     @Column(nullable = false, name = "is_enabled")
     private Boolean isEnabled;
+
+    @Column(name = "is_profile_completed")
+    private Boolean isProfileUpdated;
 
     @Transient
     @Setter(AccessLevel.NONE)
@@ -81,7 +90,7 @@ public class UmsUsers {
     public void setPermissions(
             Set<SystemPermissions> permissions,
             Map<String, Set<InstitutionPermission>> institutePermission
-    ){
+    ) {
         this.systemPermissions = permissions;
         this.institutePermission = institutePermission;
     }

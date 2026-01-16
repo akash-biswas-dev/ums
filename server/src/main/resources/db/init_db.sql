@@ -1,32 +1,3 @@
-DROP TABLE IF EXISTS student_upcoming_exams;
-DROP TABLE IF EXISTS exam_invigilators;
-DROP TABLE IF EXISTS student_result;
-DROP TABLE IF EXISTS faculty_in_institution;
-DROP TABLE IF EXISTS students_in_institution;
-DROP TABLE IF EXISTS exams;
-DROP TABLE IF EXISTS subjects_on_curriculum;
-DROP TABLE IF EXISTS term;
-DROP TABLE IF EXISTS curriculums_on_institute;
-DROP TABLE IF EXISTS curriculum;
-DROP TABLE IF EXISTS user_permissions;
-DROP TABLE IF EXISTS role_permissions;
-DROP TABLE IF EXISTS department;
-DROP TABLE IF EXISTS program;
-DROP TABLE IF EXISTS subject;
-DROP TABLE IF EXISTS building;
-DROP TABLE IF EXISTS user_education;
-DROP TABLE IF EXISTS education;
-DROP TABLE IF EXISTS user_role;
-DROP TABLE IF EXISTS role;
-DROP TABLE IF EXISTS stuff_salary;
-DROP TABLE IF EXISTS stuff_details;
-DROP TABLE IF EXISTS stuff_profile;
-DROP TABLE IF EXISTS salary;
-DROP TABLE IF EXISTS institution;
-DROP TABLE IF EXISTS student_profile;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS address;
-
 
 CREATE TABLE address
 (
@@ -36,7 +7,7 @@ CREATE TABLE address
     city        VARCHAR(50),
     district    VARCHAR(50),
     state       VARCHAR(50),
-    country     VARCHAR(50)
+    country     VARCHAR(20)
 );
 CREATE TABLE users
 (
@@ -95,7 +66,7 @@ CREATE TABLE institution
     created_on DATE         NOT NULL
 );
 
-CREATE TABLE role
+CREATE TABLE institution_role
 (
     id               VARCHAR(36) PRIMARY KEY,
     name             VARCHAR(100),
@@ -104,13 +75,13 @@ CREATE TABLE role
     FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE
 );
 
-CREATE TABLE user_role
+CREATE TABLE user_institution_role
 (
     user_id VARCHAR(36),
     role_id VARCHAR(36),
     PRIMARY KEY (user_id, role_id),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE
+    FOREIGN KEY (role_id) REFERENCES institution_role (id) ON DELETE CASCADE
 );
 
 CREATE TABLE role_permissions
@@ -118,7 +89,13 @@ CREATE TABLE role_permissions
     role_id    VARCHAR(36),
     permission VARCHAR(30),
     PRIMARY KEY (role_id, permission),
-    FOREIGN KEY (role_id) REFERENCES role (id) ON DELETE CASCADE
+    FOREIGN KEY (role_id) REFERENCES institution_role (id) ON DELETE CASCADE
+);
+
+CREATE TABLE salary
+(
+    id   VARCHAR(36) PRIMARY KEY,
+    name VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE stuff_profile
@@ -143,22 +120,6 @@ CREATE TABLE stuff_details
 );
 
 
-CREATE TABLE salary
-(
-    id   BIGINT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(50)
-);
-
-CREATE TABLE stuff_salary
-(
-    salary_id     BIGINT,
-    stuff_id      VARCHAR(36),
-
-    academic_year VARCHAR(9),
-    FOREIGN KEY (salary_id) REFERENCES salary (id) ON DELETE CASCADE,
-    FOREIGN KEY (stuff_id) REFERENCES users (id) ON DELETE CASCADE
-);
-
 
 CREATE TABLE education
 (
@@ -170,15 +131,6 @@ CREATE TABLE education
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
-CREATE TABLE user_education
-(
-    user_id      VARCHAR(36),
-    education_id VARCHAR(36),
-    added_on     DATE NOT NULL,
-    PRIMARY KEY (user_id, education_id),
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (education_id) REFERENCES education (id) ON DELETE CASCADE
-);
 
 CREATE TABLE program
 (
@@ -216,11 +168,11 @@ CREATE TABLE subject
 CREATE TABLE curriculum
 (
     id              BIGINT AUTO_INCREMENT PRIMARY KEY,
-    is_approved     BOOLEAN NOT NULL,
-    is_autonomous   BOOLEAN NOT NULL,
-    created_on      DATE    NOT NULL,
-    discontinued_on DATE,
-    name            VARCHAR(200)
+    name            VARCHAR(200) NOT NULL,
+    is_approved     BOOLEAN      NOT NULL,
+    is_autonomous   BOOLEAN      NOT NULL,
+    created_on      DATE         NOT NULL,
+    discontinued_on DATE
 );
 
 CREATE TABLE curriculums_on_institute
@@ -241,32 +193,29 @@ CREATE TABLE curriculums_on_institute
 CREATE TABLE term
 (
     id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
-    duration_in_months INT NOT NULL,
-    term_serial        INT
+    duration_in_months INT    NOT NULL,
+    term_serial        INT,
+    curriculum_id      BIGINT NOT NULL,
+    FOREIGN KEY (curriculum_id) REFERENCES curriculum (id) ON DELETE CASCADE
 );
 
 CREATE TABLE subjects_on_curriculum
 (
     subject_code  VARCHAR(50),
     curriculum_id BIGINT,
-    PRIMARY KEY (subject_code, curriculum_id),
-    term_id       BIGINT NOT NULL,
-    credit_points INT    NOT NULL,
+    -- This protects to create a row where one subject is added two times in on curriculum.
+    UNIQUE (subject_code, curriculum_id),
+    credit_points INT NOT NULL,
     FOREIGN KEY (subject_code) REFERENCES subject (code) ON DELETE CASCADE,
-    FOREIGN KEY (curriculum_id) REFERENCES curriculum (id) ON DELETE CASCADE,
-    FOREIGN KEY (term_id) REFERENCES term (id) ON DELETE CASCADE
+    FOREIGN KEY (curriculum_id) REFERENCES curriculum (id) ON DELETE CASCADE
 );
 
-
-CREATE TABLE exams
+CREATE TABLE subjects_terms
 (
-    id                BIGINT AUTO_INCREMENT PRIMARY KEY,
-    curriculum_id     BIGINT        NOT NULL,
-    term_id           BIGINT        NOT NULL,
-    subject_code      VARCHAR(50)   NOT NULL,
-    total_marks       DECIMAL(5, 2) NOT NULL,
-    duration_in_hours INT           NOT NULL,
-    FOREIGN KEY (curriculum_id) REFERENCES curriculum (id) ON DELETE CASCADE,
+    id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    term_id      BIGINT      NOT NULL,
+    subject_code VARCHAR(50) NOT NULL,
+    UNIQUE (term_id, subject_code),
     FOREIGN KEY (term_id) REFERENCES term (id) ON DELETE CASCADE,
     FOREIGN KEY (subject_code) REFERENCES subject (code) ON DELETE CASCADE
 );
@@ -293,14 +242,14 @@ CREATE TABLE students_in_institution
 (
     registration      VARCHAR(20) PRIMARY KEY,
     student_id        VARCHAR(36) NOT NULL,
-    program_code      VARCHAR(50) NOT NULL,
     institution_code  VARCHAR(50) NOT NULL,
+    program_code      VARCHAR(50) NOT NULL,
     department_code   VARCHAR(50) NOT NULL,
     curriculum_id     BIGINT      NOT NULL,
     registration_year DATE        NOT NULL,
-    term_id           BIGINT,
+    current_term_id   BIGINT,
     passing_year      DATE,
-    FOREIGN KEY (term_id) REFERENCES term (id) ON DELETE CASCADE,
+    FOREIGN KEY (current_term_id) REFERENCES term (id) ON DELETE CASCADE,
     FOREIGN KEY (student_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (program_code) REFERENCES program (code) ON DELETE CASCADE,
     FOREIGN KEY (institution_code) REFERENCES institution (code) ON DELETE CASCADE,
@@ -308,42 +257,57 @@ CREATE TABLE students_in_institution
     FOREIGN KEY (curriculum_id) REFERENCES curriculum (id) ON DELETE CASCADE
 );
 
+
+CREATE TABLE exams
+(
+    id                BIGINT AUTO_INCREMENT PRIMARY KEY,
+    subject_term_id   BIGINT        NOT NULL,
+    -- Can be final or mid-semester exam.
+    exam_type         VARCHAR(20)   NOT NULL,
+    total_marks       DECIMAL(5, 2) NOT NULL,
+    duration_in_hours INT           NOT NULL,
+    FOREIGN KEY (subject_term_id) REFERENCES subjects_terms (id) ON DELETE CASCADE
+);
+
+CREATE TABLE exams_up_coming
+(
+    id       VARCHAR(36) PRIMARY KEY,
+    exam_id  BIGINT,
+    held_on  DATETIME,
+    venue_id BIGINT,
+    UNIQUE (exam_id, held_on, venue_id),
+    FOREIGN KEY (exam_id) REFERENCES exams (id) ON DELETE CASCADE,
+    FOREIGN KEY (venue_id) REFERENCES building (id) ON DELETE CASCADE
+);
+
 CREATE TABLE exam_invigilators
 (
-    exam_id        BIGINT,
-    venue_id       BIGINT,
-    held_on        DATE,
-    invigilator_id VARCHAR(36),
-    PRIMARY KEY (exam_id, venue_id, held_on, invigilator_id),
-    FOREIGN KEY (exam_id) REFERENCES exams (id) ON DELETE CASCADE,
-    FOREIGN KEY (venue_id) REFERENCES building (id) ON DELETE CASCADE,
-    FOREIGN KEY (invigilator_id) REFERENCES stuff_profile (user_id) ON DELETE CASCADE
+    exam_upcoming VARCHAR(36),
+    stuff_id      VARCHAR(36),
+    PRIMARY KEY (exam_upcoming, stuff_id),
+    FOREIGN KEY (exam_upcoming) REFERENCES exams_up_coming (id) ON DELETE CASCADE,
+    FOREIGN KEY (stuff_id) REFERENCES stuff_profile (user_id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE student_upcoming_exams
+CREATE TABLE student_exams
 (
-    exam_id       BIGINT,
-    student_id    VARCHAR(36),
-    held_on       DATE,
-    venue_id      BIGINT NOT NULL,
-    starting_time TIME,
-    PRIMARY KEY (exam_id, student_id, held_on),
-    FOREIGN KEY (exam_id) REFERENCES exams (id) ON DELETE CASCADE,
-    FOREIGN KEY (venue_id) REFERENCES building (id) ON DELETE CASCADE,
-    FOREIGN KEY (student_id) REFERENCES users (id) ON DELETE CASCADE
+    exams_upcoming VARCHAR(36),
+    student_registration VARCHAR(20),
+    PRIMARY KEY (exams_upcoming, student_registration),
+    FOREIGN KEY (exams_upcoming) REFERENCES exams_up_coming (id) ON DELETE CASCADE,
+    FOREIGN KEY (student_registration) REFERENCES students_in_institution(registration) ON DELETE CASCADE
 );
 
 
 CREATE TABLE student_result
 (
-    student_id   VARCHAR(36),
+    student_registration VARCHAR(20),
     exam_id      BIGINT,
-    attempt_id   INT DEFAULT 1,
     obtain_marks DECIMAL(5, 2),
     held_on      DATE,
     status       ENUM ('NOT_ATTEMPTED','ATTEMPTED','CANCELLED'),
-    PRIMARY KEY (student_id, exam_id, held_on, attempt_id),
-    FOREIGN KEY (student_id) REFERENCES users (id) ON DELETE CASCADE,
+    PRIMARY KEY (student_registration, exam_id, held_on),
+    FOREIGN KEY (student_registration) REFERENCES students_in_institution(registration) ON DELETE CASCADE,
     FOREIGN KEY (exam_id) REFERENCES exams (id) ON DELETE CASCADE
 );

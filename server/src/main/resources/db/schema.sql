@@ -40,9 +40,10 @@ CREATE TABLE institutions
 CREATE TABLE roles
 (
     id               VARCHAR(36) PRIMARY KEY,
-    role_name        VARCHAR(50) NOT NULL,
+    name             VARCHAR(50) NOT NULL,
+    description      VARCHAR(200),
     created_on       DATE        NOT NULL,
-    institution_code VARCHAR(36)
+    institution_code VARCHAR(50)
 );
 
 CREATE TABLE user_roles
@@ -262,8 +263,8 @@ CREATE TABLE exam_invigilators
     exam_upcoming VARCHAR(36),
     stuff_id      VARCHAR(36),
     PRIMARY KEY (exam_upcoming, stuff_id),
-    FOREIGN KEY (exam_upcoming) REFERENCES upcoming_exams(id) ON DELETE CASCADE,
-    FOREIGN KEY (stuff_id) REFERENCES stuff_profiles(user_id) ON DELETE CASCADE
+    FOREIGN KEY (exam_upcoming) REFERENCES upcoming_exams (id) ON DELETE CASCADE,
+    FOREIGN KEY (stuff_id) REFERENCES stuff_profiles (user_id) ON DELETE CASCADE
 );
 
 
@@ -272,7 +273,7 @@ CREATE TABLE student_exams
     exams_upcoming       VARCHAR(36),
     student_registration VARCHAR(20),
     PRIMARY KEY (exams_upcoming, student_registration),
-    FOREIGN KEY (exams_upcoming) REFERENCES upcoming_exams(id) ON DELETE CASCADE,
+    FOREIGN KEY (exams_upcoming) REFERENCES upcoming_exams (id) ON DELETE CASCADE,
     FOREIGN KEY (student_registration) REFERENCES students_in_institutions (registration) ON DELETE CASCADE
 );
 

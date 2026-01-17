@@ -6,23 +6,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "user_roles")
-public class UserRole {
+@Entity
+@Table(name = "role_institution_permissions")
+public class RoleInstitutionPermission {
 
     @EmbeddedId
-    private UserRoleId id;
+    private RoleInstitutionPermissionId id;
 
     @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UmsUsers users;
-
-    @ManyToOne
-    @MapsId("roleId")
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
+
 }

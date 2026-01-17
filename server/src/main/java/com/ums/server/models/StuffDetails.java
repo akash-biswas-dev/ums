@@ -23,7 +23,7 @@ public class StuffDetails {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "stuff_id", referencedColumnName = "user_id")
-    private StuffProfile stuffProfile;
+    private StuffProfile stuffProfile
 
     @JoinColumn(name = "institution_code", referencedColumnName = "code")
     @ManyToOne(fetch = FetchType.LAZY)

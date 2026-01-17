@@ -3,7 +3,7 @@ package com.ums.server.config;
 
 import com.ums.server.models.*;
 import com.ums.server.models.permission.SystemPermissions;
-import com.ums.server.repository.RolePermissionRepository;
+import com.ums.server.repository.RoleInstitutePermissionRepository;
 import com.ums.server.repository.RoleRepository;
 import com.ums.server.repository.UserRepository;
 import com.ums.server.repository.UserRoleRepository;
@@ -32,7 +32,7 @@ public class AdminUserConfig {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private final RolePermissionRepository rolePermissionRepository;
+    private final RoleInstitutePermissionRepository rolePermissionRepository;
     private final RoleRepository roleRepository;
 
     private static final List<SystemPermissions> ADMIN_PERMISSION = Arrays.stream(SystemPermissions.values()).toList();

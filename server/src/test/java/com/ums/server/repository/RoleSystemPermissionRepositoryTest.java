@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ActiveProfiles("test-db")
-class RolePermissionRepositoryTest {
+class RoleSystemPermissionRepositoryTest {
 
     @Autowired
-    private RolePermissionRepository rolePermissionRepository;
+    private RoleInstitutePermissionRepository rolePermissionRepository;
 
     @Autowired
     private RoleRepository roleRepository;

@@ -1,6 +1,7 @@
 package com.ums.server.models;
 
 
+import com.ums.server.models.permission.InstitutionPermission;
 import com.ums.server.models.permission.SystemPermissions;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -16,9 +17,11 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserPermissionId implements Serializable {
+public class RoleSystemPermissionId implements Serializable {
 
-    private String userId;
+    @Column(length = 36)
+    private String roleId;
     @Enumerated(EnumType.STRING)
+    @Column(name = "system_permission")
     private SystemPermissions permission;
 }

@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "role_permissions")
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RolePermission {
+@Table(name = "role_system_permissions")
+public class RoleSystemPermission {
 
     @EmbeddedId
-    private RolePermissionId id;
+    private RoleSystemPermissionId id;
 
     @MapsId(value = "roleId")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,7 +24,7 @@ public class RolePermission {
     private Role role;
 
 
-    public RolePermission(String roleName, InstitutionPermission permission) {
-        this.id = new RolePermissionId(roleName, permission);
+    public RoleSystemPermission(String roleName, SystemPermissions permission) {
+        this.id = new RoleSystemPermissionId(roleName, permission);
     }
 }

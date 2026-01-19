@@ -16,7 +16,10 @@ public class Address {
     private String buildingNo;
     private String street;
     private String city;
+    @Enumerated(EnumType.STRING)
     private District district;
+    @Enumerated(EnumType.STRING)
     private State state;
+    @Enumerated(EnumType.STRING)
     private Country country;
 }

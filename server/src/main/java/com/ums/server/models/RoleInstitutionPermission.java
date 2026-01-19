@@ -16,7 +16,8 @@ public class RoleInstitutionPermission {
     @EmbeddedId
     private RoleInstitutionPermissionId id;
 
-    @ManyToOne
+    @MapsId("roleId")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 

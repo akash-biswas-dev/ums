@@ -5,6 +5,7 @@ import com.ums.server.models.RoleInstitutionPermission;
 import com.ums.server.models.RoleInstitutionPermissionId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -12,7 +13,12 @@ public interface RoleInstitutePermissionRepository extends JpaRepository<RoleIns
 
 // FIXME: Write the join logic.
    @Query("""
-           SELECT new com.ums.server.dtos.db.InstitutionPermissionDTO(rip.id.institutionPermission) FROM RoleInstitutionPermission rip JOIN rip.role r JOIN r.institution ins WHERE rip.id.roleId = :roleId AND 
+           SELECT new com.ums.server.dtos.db.InstitutionPermissionDTO(
+           r.institution.code,
+           rip.id.institutionPermission)
+           FROM RoleInstitutionPermission rip JOIN Role r ON
+           r.id = rip.id.roleId WHERE rip.id.roleId = :roleId
+           AND r.institution IS NOT NULL
            """)
-    List<InstitutionPermissionDTO> findAllPermissionsByRoleId(String roleId);
+    List<InstitutionPermissionDTO> findAllPermissionsByRoleId(@Param(value = "roleId") String roleId);
 }

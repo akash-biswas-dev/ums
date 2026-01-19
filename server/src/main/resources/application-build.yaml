@@ -8,4 +8,4 @@ spring:
       ddl-auto: create-drop
   sql:
     init:
-      data-locations: db/schema.sql
+      data-locations: schema-sql/V2__init-schema.sql

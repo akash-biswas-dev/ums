@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
                     .findAllPermissionsByRoleId(roleId.roleId())
                     .forEach(institutionPermissionDTO -> {
                         String institutionCode = institutionPermissionDTO.institutionCode();
-
+//                       If find a new Institution code then add a new HashSet.
                         if (!institutionPermissions.containsKey(institutionCode)) {
                             institutionPermissions.put(institutionCode, new HashSet<>());
                         }

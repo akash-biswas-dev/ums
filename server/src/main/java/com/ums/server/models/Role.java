@@ -16,6 +16,7 @@ import java.time.LocalDate;
 public class Role {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     @Column(length = 100)
     private String name;
@@ -28,4 +29,18 @@ public class Role {
     @JoinColumn(name = "institution_code", referencedColumnName = "code")
     @ManyToOne(fetch = FetchType.LAZY)
     private Institution institution;
+
+    public Role(String name, String description, String institutionCode) {
+        this.name = name;
+        this.description = description;
+        this.createdOn = LocalDate.now();
+        this.institution = Institution.builder().code(institutionCode).build();
+    }
+
+    public Role(String name , String description){
+        this.name = name;
+        this.description = description;
+        this.institution = null;
+        this.createdOn = LocalDate.now();
+    }
 }

@@ -23,8 +23,10 @@ public class RoleSystemPermission {
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
 
-
-    public RoleSystemPermission(String roleName, SystemPermissions permission) {
-        this.id = new RoleSystemPermissionId(roleName, permission);
+    public RoleSystemPermission(String roleId, SystemPermissions permission) {
+        this.role = Role.builder()
+                .id(roleId)
+                .build();
+        this.id= new RoleSystemPermissionId(roleId,permission);
     }
 }

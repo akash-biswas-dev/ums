@@ -2,8 +2,7 @@ package com.ums.server.models.permission;
 
 
 public enum SystemPermissions {
-
-    //    System level permission.
-    ADMIN_READ,
-    ADMIN_WRITE
+    PROGRAM_READ,
+    PROGRAM_UPDATE,
+    PROGRAM_DELETE;
 }

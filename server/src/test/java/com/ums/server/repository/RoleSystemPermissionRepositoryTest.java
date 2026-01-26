@@ -1,21 +1,22 @@
 package com.ums.server.repository;
 
-import org.junit.jupiter.api.Nested;
+import com.ums.server.dtos.db.RoleSystemPermissionDTO;
+import com.ums.server.models.Role;
+import com.ums.server.models.RoleSystemPermission;
+import com.ums.server.models.permission.SystemPermissions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DataJpaTest
-class RoleSystemPermissionRepositoryTest extends RepositoryProfileConfiguration{
+@RepositoryTest
+class RoleSystemPermissionRepositoryTest {
 
     @Autowired
-    private RoleInstitutePermissionRepository rolePermissionRepository;
+    private RoleSystemPermissionRepository permissionRepository;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -23,19 +24,36 @@ class RoleSystemPermissionRepositoryTest extends RepositoryProfileConfiguration{
     @Autowired
     private InstitutionRepository institutionRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+
+    private Role testRole1;
+    private Role testRole2;
+
+   @BeforeEach
+    void beforeEach() {
+        this.testRole1 = roleRepository.save(new Role("Role 1", "A test user 2"));
+        this.testRole2 = roleRepository.save(new Role("Role 2", "A test user 2"));
+
+        permissionRepository.save(new RoleSystemPermission(testRole1.getId(), SystemPermissions.PROGRAM_READ));
+        permissionRepository.save(new RoleSystemPermission(testRole1.getId(), SystemPermissions.PROGRAM_UPDATE));
+        permissionRepository.save(new RoleSystemPermission(testRole2.getId(), SystemPermissions.PROGRAM_UPDATE));
+        permissionRepository.save(new RoleSystemPermission(testRole2.getId(), SystemPermissions.PROGRAM_READ));
+        permissionRepository.save(new RoleSystemPermission(testRole2.getId(), SystemPermissions.PROGRAM_DELETE));
+    }
+
+    @Test
+    void shouldHaveAllTheRoleSystemPermissionsSaved() {
+        long entries = permissionRepository.count();
+        assertEquals(5,entries);
+    }
 
 
-    @Nested
-    class FetchAllPermissionsUserHaveWithInstitutions {
+    @Test
+    void shouldHaveReturnCorrectPermissionsARoleHas(){
+        List<RoleSystemPermissionDTO> permissionForTestRole1 = permissionRepository.findAllPermissionsByRoleId(testRole1.getId());
+        List<RoleSystemPermissionDTO> permissionsForTestRole2 = permissionRepository.findAllPermissionsByRoleId(testRole2.getId());
 
-        @Test
-        @Sql(scripts = "/test-data-sql/insert-users-with-role-permission-institutions.sql")
-        void fetchAllThePermissionsUserHaveInstitutionWise() {
-            long count = userRepository.count();
-            assertTrue(count > 0);
-        }
+        assertEquals(2, permissionForTestRole1.size());
+        assertEquals(3, permissionsForTestRole2.size());
     }
 
 }

@@ -40,7 +40,7 @@ CREATE TABLE institutions
 CREATE TABLE roles
 (
     id          VARCHAR(36) PRIMARY KEY,
-    name        VARCHAR(50) NOT NULL,
+    name        VARCHAR(50) NOT NULL UNIQUE ,
     description VARCHAR(200),
     created_on  DATE        NOT NULL
 );

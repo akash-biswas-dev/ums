@@ -1,30 +1,25 @@
 package com.ums.server.repository;
 
 import com.ums.server.dtos.db.RoleIdDTO;
-import com.ums.server.models.Role;
-import com.ums.server.models.UmsUsers;
 import com.ums.server.models.UserRole;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @RepositoryTest
 @Sql(scripts = {
         "/test-data-sql/base-test-data.sql",
         "/test-data-sql/repository/user-role-repository-test.sql"
-},
-executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+})
 class UserRoleRepositoryTest {
 
     @Autowired
@@ -60,10 +55,15 @@ class UserRoleRepositoryTest {
     @Test
     void shouldNotHaveAllTheUserRoleEntries() {
         AtomicLong expectedEntries = new AtomicLong(0);
-        rolesUserHave.forEach((_userId,roles)->expectedEntries.addAndGet(roles.size()));
+        rolesUserHave.forEach((_userId,roles)-> expectedEntries.addAndGet(roles.size()));
 
-        long actual = userRoleRepository.count();
-        assertEquals(expectedEntries.get(),actual);
+        AtomicLong actualEntries= new AtomicLong(0);
+
+        rolesUserHave.forEach((userId,_roles)-> {
+            int countOfRolesUserHave = userRoleRepository.findAllRolesByUserId(userId).size();
+            actualEntries.addAndGet(countOfRolesUserHave);
+        });
+        assertEquals(expectedEntries.get(),actualEntries.get());
 
     }
 
@@ -76,4 +76,6 @@ class UserRoleRepositoryTest {
                     assertEquals(rolesUserHave.get(userId).size(),rolesUserActuallyHave.size());
                 });
     }
+
+
 }

@@ -14,8 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql(scripts = {
         "/test-data-sql/base-test-data.sql",
         "/test-data-sql/repository/role-institution-permission-repository-test.sql"
-},
-executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+})
 class RoleInstitutePermissionRepositoryTest {
 
     @Autowired

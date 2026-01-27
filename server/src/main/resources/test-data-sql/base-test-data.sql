@@ -17,7 +17,7 @@ VALUES ('INST001', 'Tech University', '2023-01-10'),
        ('INST007', 'International Sports Academy', '2023-07-25');
 
 INSERT INTO roles (id, name, description, created_on)
-VALUES ('660e8400-e29b-41d4-a716-446655440001', 'System Admin', 'A role which have all system level permissions',
+VALUES ('660e8400-e29b-41d4-a716-446655440001', 'Test System Admin', 'A role which have all system level permissions',
         '2023-01-10'),
        ('660e8400-e29b-41d4-a716-446655440002', 'Exam Controller',
         'Role that can control all exams across the institutions', '2023-01-10'),

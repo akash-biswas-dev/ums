@@ -18,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql(scripts = {
         "/test-data-sql/base-test-data.sql",
         "/test-data-sql/repository/role-system-permission-test.sql"
-},
-executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+})
 class RoleSystemPermissionRepositoryTest {
 
     @Autowired

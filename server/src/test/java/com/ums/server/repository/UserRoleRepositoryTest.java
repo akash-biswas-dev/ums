@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @RepositoryTest
+@Sql(scripts = {
+        "/test-data-sql/base-test-data.sql",
+        "/test-data-sql/repository/user-role-repository-test.sql"
+},
+executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class UserRoleRepositoryTest {
 
     @Autowired
@@ -30,64 +36,44 @@ class UserRoleRepositoryTest {
     @Autowired
     private UmsUserRepository userRepository;
 
-
-    private Map<String, List<String>> rolesUserHave;
+    private Map<String,List<String>> rolesUserHave;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach(){
         this.rolesUserHave = new HashMap<>();
-        Role testRole1 = roleRepository.save(new Role("Role 1", "A test user 2"));
-        Role testRole2 = roleRepository.save(new Role("Role 2", "A test user 2"));
-        Role testRole3 = roleRepository.save(new Role("Role 3", "A test user 2"));
 
-        UmsUsers testUser1 = userRepository.save(new UmsUsers(
-                "testUser1@gmail.com",
-                "password",
-                false,
-                true,
-                false
+        rolesUserHave.put("550e8400-e29b-41d4-a716-446655440006",List.of(
+                "660e8400-e29b-41d4-a716-446655440001",
+                "660e8400-e29b-41d4-a716-446655440002",
+                "660e8400-e29b-41d4-a716-446655440008"
         ));
-        UmsUsers testUser2 = userRepository.save(new UmsUsers(
-                "testUser2@gmail.com",
-                "password",
-                false,
-                true,
-                false
+        rolesUserHave.put("550e8400-e29b-41d4-a716-446655440007",List.of(
+                "660e8400-e29b-41d4-a716-446655440002",
+                "660e8400-e29b-41d4-a716-446655440001"
         ));
-
-        rolesUserHave.put(testUser1.getId(), List.of(testRole1.getId(), testRole2.getId(), testRole3.getId()));
-        rolesUserHave.put(testUser2.getId(), List.of(testRole1.getId(), testRole3.getId()));
-
-        rolesUserHave.forEach((userId, roles) -> {
-            List<UserRole> userRoles = new ArrayList<>();
-            for (String roleId : roles) {
-                userRoles.add(new UserRole(userId, roleId));
-            }
-            userRoleRepository.saveAll(userRoles);
-        });
+        rolesUserHave.put("550e8400-e29b-41d4-a716-446655440008",List.of(
+                "660e8400-e29b-41d4-a716-446655440002"
+        ));
     }
+
 
     @Test
     void shouldNotHaveAllTheUserRoleEntries() {
         AtomicLong expectedEntries = new AtomicLong(0);
-
         rolesUserHave.forEach((_userId,roles)->expectedEntries.addAndGet(roles.size()));
 
         long actual = userRoleRepository.count();
         assertEquals(expectedEntries.get(),actual);
 
     }
-    @Nested
-    class FindAllRolesByUserId{
-        @Test
-        void shouldHaveSameNumberOfRolesUserHave(){
-            rolesUserHave
-                    .keySet()
-                    .forEach((userId)->{
-                        List<RoleIdDTO> rolesUserActuallyHave = userRoleRepository.findAllRolesByUserId(userId);
-                        assertEquals(rolesUserHave.get(userId).size(),rolesUserActuallyHave.size());
-                    });
-        }
 
+    @Test
+    void shouldHaveSameNumberOfRolesUserHave(){
+        rolesUserHave
+                .keySet()
+                .forEach((userId)->{
+                    List<RoleIdDTO> rolesUserActuallyHave = userRoleRepository.findAllRolesByUserId(userId);
+                    assertEquals(rolesUserHave.get(userId).size(),rolesUserActuallyHave.size());
+                });
     }
 }

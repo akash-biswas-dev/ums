@@ -21,6 +21,7 @@ public class RoleInstitutionPermissionId implements Serializable {
 
     @Column(length = 36)
     private String roleId;
+    private String institutionCode;
     @Enumerated(value = EnumType.STRING)
     @Column(name = "institution_permission")
     private InstitutionPermission institutionPermission;

@@ -39,11 +39,10 @@ CREATE TABLE institutions
 
 CREATE TABLE roles
 (
-    id               VARCHAR(36) PRIMARY KEY,
-    name             VARCHAR(50) NOT NULL,
-    description      VARCHAR(200),
-    created_on       DATE        NOT NULL,
-    institution_code VARCHAR(50)
+    id          VARCHAR(36) PRIMARY KEY,
+    name        VARCHAR(50) NOT NULL,
+    description VARCHAR(200),
+    created_on  DATE        NOT NULL
 );
 
 CREATE TABLE user_roles
@@ -65,9 +64,11 @@ CREATE TABLE role_system_permissions
 CREATE TABLE role_institution_permissions
 (
     role_id                VARCHAR(36),
+    institution_code       VARCHAR(50),
     institution_permission VARCHAR(30),
-    PRIMARY KEY (role_id, institution_permission),
-    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE
+    PRIMARY KEY (role_id, institution_code, institution_permission),
+    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE,
+    FOREIGN KEY (institution_code) REFERENCES institutions (code) ON DELETE CASCADE
 );
 
 CREATE TABLE salaries

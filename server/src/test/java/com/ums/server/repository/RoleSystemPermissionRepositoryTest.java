@@ -1,19 +1,25 @@
 package com.ums.server.repository;
 
-import com.ums.server.dtos.db.RoleSystemPermissionDTO;
-import com.ums.server.models.Role;
-import com.ums.server.models.RoleSystemPermission;
 import com.ums.server.models.permission.SystemPermissions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+
 @RepositoryTest
+@Sql(scripts = {
+        "/test-data-sql/base-test-data.sql",
+        "/test-data-sql/repository/role-system-permission-test.sql"
+},
+executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class RoleSystemPermissionRepositoryTest {
 
     @Autowired
@@ -25,43 +31,36 @@ class RoleSystemPermissionRepositoryTest {
     @Autowired
     private InstitutionRepository institutionRepository;
 
+    private Map<String, List<SystemPermissions>> systemPermissionsUserHave;
 
-    @Nested
-    class FindAllSystemPermissionsByRoleName {
-        private Role testRole1;
-        private Role testRole2;
-        private Role testRole3;
+    @BeforeEach
+    void beforeEach() {
+        this.systemPermissionsUserHave = new HashMap<>();
 
-        @BeforeEach
-        void beforeEach() {
-            this.testRole1 = roleRepository.save(new Role("Role 1", "A test user 2"));
-            this.testRole2 = roleRepository.save(new Role("Role 2", "A test user 2"));
-            this.testRole3 = roleRepository.save(new Role("Role 3", "A test user 2"));
+        systemPermissionsUserHave.put("660e8400-e29b-41d4-a716-446655440001",List.of(
+                SystemPermissions.TEST_SYSTEM_PERMISSION_1,
+                SystemPermissions.TEST_SYSTEM_PERMISSION_2,
+                SystemPermissions.TEST_SYSTEM_PERMISSION_3
+        ));
+        systemPermissionsUserHave.put("660e8400-e29b-41d4-a716-446655440002",List.of(
+                SystemPermissions.TEST_SYSTEM_PERMISSION_3,
+                SystemPermissions.TEST_SYSTEM_PERMISSION_1
+        ));
+        systemPermissionsUserHave.put("660e8400-e29b-41d4-a716-446655440008",List.of());
+    }
 
-            permissionRepository.save(new RoleSystemPermission(testRole1.getId(), SystemPermissions.TEST_SYSTEM_PERMISSIONS_1));
-            permissionRepository.save(new RoleSystemPermission(testRole1.getId(), SystemPermissions.TEST_SYSTEM_PERMISSIONS_2));
-            permissionRepository.save(new RoleSystemPermission(testRole2.getId(), SystemPermissions.TEST_SYSTEM_PERMISSIONS_2));
-            permissionRepository.save(new RoleSystemPermission(testRole2.getId(), SystemPermissions.TEST_SYSTEM_PERMISSIONS_1));
-            permissionRepository.save(new RoleSystemPermission(testRole2.getId(), SystemPermissions.TEST_SYSTEM_PERMISSIONS_3));
-        }
+    @Test
+    void shouldHaveAllTheRoleSystemPermissionsSaved() {
+        long entries = permissionRepository.count();
+        assertEquals(5, entries);
+    }
 
-        @Test
-        void shouldHaveAllTheRoleSystemPermissionsSaved() {
-            long entries = permissionRepository.count();
-            assertEquals(5, entries);
-        }
-
-
-        @Test
-        void shouldHaveReturnCorrectPermissionsARoleHas() {
-            List<RoleSystemPermissionDTO> permissionForTestRole1 = permissionRepository.findAllPermissionsByRoleId(testRole1.getId());
-            List<RoleSystemPermissionDTO> permissionsForTestRole2 = permissionRepository.findAllPermissionsByRoleId(testRole2.getId());
-            List<RoleSystemPermissionDTO> permissionsForTestRole3 = permissionRepository.findAllPermissionsByRoleId(testRole3.getId());
-
-            assertEquals(2, permissionForTestRole1.size());
-            assertEquals(3, permissionsForTestRole2.size());
-            assertEquals(0, permissionsForTestRole3.size());
-        }
+    @Test
+    void shouldHaveReturnCorrectPermissionsARoleHas() {
+        systemPermissionsUserHave.forEach((roleId,permissionList)->{
+            int permissionCountExpected = permissionRepository.findAllPermissionsByRoleId(roleId).size();
+            assertEquals(permissionCountExpected,permissionList.size());
+        });
     }
 
 

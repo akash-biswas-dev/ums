@@ -14,11 +14,10 @@ public interface RoleInstitutePermissionRepository extends JpaRepository<RoleIns
 // FIXME: Write the join logic.
    @Query("""
            SELECT new com.ums.server.dtos.db.InstitutionPermissionDTO(
-           r.institution.code,
+           rip.id.institutionCode,
            rip.id.institutionPermission)
-           FROM RoleInstitutionPermission rip JOIN Role r ON
-           r.id = rip.id.roleId WHERE rip.id.roleId = :roleId
-           AND r.institution IS NOT NULL
+           FROM RoleInstitutionPermission rip
+           WHERE rip.id.roleId = :roleId
            """)
     List<InstitutionPermissionDTO> findAllPermissionsByRoleId(@Param(value = "roleId") String roleId);
 }

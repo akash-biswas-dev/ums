@@ -5,7 +5,7 @@ import com.ums.server.models.*;
 import com.ums.server.models.permission.SystemPermissions;
 import com.ums.server.repository.RoleInstitutePermissionRepository;
 import com.ums.server.repository.RoleRepository;
-import com.ums.server.repository.UserRepository;
+import com.ums.server.repository.UmsUserRepository;
 import com.ums.server.repository.UserRoleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ import java.util.UUID;
 public class AdminUserConfig {
 
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final UmsUserRepository userRepository;
     private final RoleInstitutePermissionRepository rolePermissionRepository;
     private final RoleRepository roleRepository;
 

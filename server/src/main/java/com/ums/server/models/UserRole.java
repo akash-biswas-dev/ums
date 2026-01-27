@@ -1,15 +1,16 @@
 package com.ums.server.models;
 
 
+import com.ums.server.repository.UserRoleRepository;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 @Table(name = "user_roles")
 public class UserRole {
 
@@ -25,4 +26,15 @@ public class UserRole {
     @MapsId("roleId")
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     private Role role;
+
+
+    public UserRole(String userId, String roleId){
+        this.id = new UserRoleId(userId,roleId);
+        this.users = UmsUsers.builder()
+                .id(userId)
+                .build();
+        this.role = Role.builder()
+                .id(roleId)
+                .build();
+    }
 }

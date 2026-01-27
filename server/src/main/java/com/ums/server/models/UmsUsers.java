@@ -73,12 +73,13 @@ public class UmsUsers {
 
     @Column(nullable = false, name = "is_locked")
     private Boolean isLocked;
-
+//    If i a user leave the institute or temporary inactive or can active later
+//    this field is used.
     @Column(nullable = false, name = "is_enabled")
     private Boolean isEnabled;
 
     @Column(name = "is_profile_completed")
-    private Boolean isProfileUpdated;
+    private Boolean isProfileCompleted;
 
     @Transient
     @Setter(AccessLevel.NONE)
@@ -94,6 +95,20 @@ public class UmsUsers {
     ) {
         this.systemPermissions = permissions;
         this.institutePermission = institutePermission;
+    }
+
+    public UmsUsers(String email,
+                    String password,
+                    Boolean isLocked,
+                    Boolean isEnabled,
+                    Boolean isProfileCompleted) {
+        this.email = email;
+        this.password = password;
+        this.isLocked = isLocked;
+        this.isEnabled = isEnabled;
+        this.isProfileCompleted = isProfileCompleted;
+        this.joinedOn = LocalDate.now();
+
     }
 
 }

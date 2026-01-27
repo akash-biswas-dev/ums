@@ -22,4 +22,13 @@ public class Institution {
 
     private LocalDate createdOn;
 
+    public Institution(
+            String code,
+            String name
+    ){
+        this.code = code;
+        this.name = name;
+        this.createdOn = LocalDate.now();
+    }
+
 }

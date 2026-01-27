@@ -1,8 +1,6 @@
 package com.ums.server.service.impl;
 
-import com.ums.server.dtos.db.InstitutionPermissionDTO;
 import com.ums.server.dtos.db.RoleIdDTO;
-import com.ums.server.dtos.projections.RoleNameProjection;
 import com.ums.server.dtos.db.RoleSystemPermissionDTO;
 import com.ums.server.exceptions.UserNotFoundException;
 import com.ums.server.models.UmsUsers;
@@ -10,7 +8,7 @@ import com.ums.server.models.permission.InstitutionPermission;
 import com.ums.server.models.permission.SystemPermissions;
 import com.ums.server.repository.RoleInstitutePermissionRepository;
 import com.ums.server.repository.RoleSystemPermissionRepository;
-import com.ums.server.repository.UserRepository;
+import com.ums.server.repository.UmsUserRepository;
 import com.ums.server.repository.UserRoleRepository;
 import com.ums.server.service.UserService;
 import lombok.NonNull;
@@ -24,7 +22,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
+    private final UmsUserRepository userRepository;
 
     private final RoleInstitutePermissionRepository rolePermissionRepository;
 

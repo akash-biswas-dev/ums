@@ -4,7 +4,7 @@ import com.ums.server.models.Gender;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.repository.RoleInstitutePermissionRepository;
 import com.ums.server.repository.RoleSystemPermissionRepository;
-import com.ums.server.repository.UserRepository;
+import com.ums.server.repository.UmsUserRepository;
 import com.ums.server.repository.UserRoleRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ import java.util.UUID;
 class UserServiceImplTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UmsUserRepository userRepository;
 
     @Mock
     private UserRoleRepository userRoleRepository;

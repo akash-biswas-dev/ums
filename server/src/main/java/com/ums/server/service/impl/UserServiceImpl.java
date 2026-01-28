@@ -6,7 +6,7 @@ import com.ums.server.exceptions.UserNotFoundException;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.models.permission.InstitutionPermission;
 import com.ums.server.models.permission.SystemPermissions;
-import com.ums.server.repository.RoleInstitutePermissionRepository;
+import com.ums.server.repository.RoleInstitutionPermissionRepository;
 import com.ums.server.repository.RoleSystemPermissionRepository;
 import com.ums.server.repository.UmsUserRepository;
 import com.ums.server.repository.UserRoleRepository;
@@ -24,13 +24,13 @@ public class UserServiceImpl implements UserService {
 
     private final UmsUserRepository userRepository;
 
-    private final RoleInstitutePermissionRepository rolePermissionRepository;
+    private final RoleInstitutionPermissionRepository rolePermissionRepository;
 
     private final UserRoleRepository userRoleRepository;
 
     private final RoleSystemPermissionRepository systemPermissionRepository;
 
-    private final RoleInstitutePermissionRepository institutePermissionRepository;
+    private final RoleInstitutionPermissionRepository institutePermissionRepository;
 
     @NonNull
     @Override

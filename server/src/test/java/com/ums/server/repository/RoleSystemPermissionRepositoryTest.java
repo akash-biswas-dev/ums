@@ -2,7 +2,6 @@ package com.ums.server.repository;
 
 import com.ums.server.models.permission.SystemPermissions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -16,19 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RepositoryTest
 @Sql(scripts = {
-        "/test-data-sql/base-test-data.sql",
+        "/test-data-sql/roles.sql",
         "/test-data-sql/repository/role-system-permission-test.sql"
 })
 class RoleSystemPermissionRepositoryTest {
 
     @Autowired
     private RoleSystemPermissionRepository permissionRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private InstitutionRepository institutionRepository;
 
     private Map<String, List<SystemPermissions>> systemPermissionsUserHave;
 

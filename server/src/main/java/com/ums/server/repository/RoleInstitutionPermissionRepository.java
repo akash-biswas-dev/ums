@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface RoleInstitutePermissionRepository extends JpaRepository<RoleInstitutionPermission, RoleInstitutionPermissionId> {
+public interface RoleInstitutionPermissionRepository extends JpaRepository<RoleInstitutionPermission, RoleInstitutionPermissionId> {
 
 // FIXME: Write the join logic.
    @Query("""

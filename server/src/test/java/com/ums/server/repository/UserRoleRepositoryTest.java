@@ -1,7 +1,6 @@
 package com.ums.server.repository;
 
 import com.ums.server.dtos.db.RoleIdDTO;
-import com.ums.server.models.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RepositoryTest
 @Sql(scripts = {
-        "/test-data-sql/base-test-data.sql",
+        "/test-data-sql/users.sql",
+        "/test-data-sql/roles.sql",
         "/test-data-sql/repository/user-role-repository-test.sql"
 })
 class UserRoleRepositoryTest {

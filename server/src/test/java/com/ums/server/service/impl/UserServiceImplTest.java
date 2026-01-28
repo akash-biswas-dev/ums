@@ -2,7 +2,7 @@ package com.ums.server.service.impl;
 
 import com.ums.server.models.Gender;
 import com.ums.server.models.UmsUsers;
-import com.ums.server.repository.RoleInstitutePermissionRepository;
+import com.ums.server.repository.RoleInstitutionPermissionRepository;
 import com.ums.server.repository.RoleSystemPermissionRepository;
 import com.ums.server.repository.UmsUserRepository;
 import com.ums.server.repository.UserRoleRepository;
@@ -25,13 +25,13 @@ class UserServiceImplTest {
     private UserRoleRepository userRoleRepository;
 
     @Mock
-    private RoleInstitutePermissionRepository rolePermissionRepository;
+    private RoleInstitutionPermissionRepository rolePermissionRepository;
 
     @Mock
     private RoleSystemPermissionRepository systemPermissionRepository;
 
     @Mock
-    private RoleInstitutePermissionRepository institutePermissionRepository;
+    private RoleInstitutionPermissionRepository institutePermissionRepository;
 
     private final UmsUsers user = UmsUsers.builder()
             .id(UUID.randomUUID().toString())

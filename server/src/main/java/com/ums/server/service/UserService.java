@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 public interface UserService  {
 
 
-    UmsUsers loadUserByEmail(@NonNull String email) throws UserNotFoundException;
+    UmsUsers getUserByEmail(@NonNull String email) throws UserNotFoundException;
 
-    UmsUsers loadUserById(@NonNull String userId) throws UsernameNotFoundException;
+    UmsUsers getUserById(@NonNull String userId) throws UserNotFoundException;
 }

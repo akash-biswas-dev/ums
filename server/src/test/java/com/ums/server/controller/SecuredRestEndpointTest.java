@@ -3,7 +3,7 @@ package com.ums.server.controller;
 
 import com.ums.server.config.SecurityConfig;
 import com.ums.server.dtos.ErrorCode;
-import com.ums.server.exceptions.JwtTokenExpiredException;
+import com.ums.server.exceptions.JwtAuthorizationExpired;
 import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.JwtAuthenticationFilter;
 import com.ums.server.service.JwtService;
@@ -22,7 +22,6 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -72,12 +71,12 @@ class SecuredRestEndpointTest {
     void shouldSendRedirectWhenTheTokenIsExpired() throws Exception {
 
         String token = "a-long-token";
-        when(jwtService.extractAuthentication(token)).thenThrow(new JwtTokenExpiredException("Token has expired"));
+        when(jwtService.extractAuthentication(token)).thenThrow(new JwtAuthorizationExpired("Token has expired"));
 
         mockMvc.perform(get(BASE_URL).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.error").value(ErrorCode.TOKEN_EXPIRED.name()));
+                .andExpect(jsonPath("$.error").value(ErrorCode.AUTHORIZATION_EXPIRED.name()));
 
     }
 

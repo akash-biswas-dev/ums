@@ -3,13 +3,10 @@ package com.ums.server.config;
 import com.ums.server.exceptions.InvalidAuthenticationException;
 import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.JwtAuthenticationFilter;
-import com.ums.server.filters.RefreshAuthorizationFilter;
-import com.ums.server.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,7 +14,6 @@ import org.springframework.security.config.annotation.web.configurers.CorsConfig
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -31,14 +27,18 @@ public class SecurityConfig {
 
     private final FilterChainExceptionHandler exceptionHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final RefreshAuthorizationFilter refreshTokenFilter;
 
     private static final String[] WHITELIST = {
+            "/index.html",
             "/ums/**",
             "/auth/**",
-            "/api/v1/auth/**",
+            "/update-profile",
             "/assets/**",
             "/vite.svg"
+    };
+
+    private static final String [] WHITE_LIST_API_ENDPOINTS={
+      "/api/v1/auth"
     };
 
     @Bean
@@ -50,7 +50,6 @@ public class SecurityConfig {
                 .cors(CorsConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(exceptionHandler, LogoutFilter.class)
-                .addFilterBefore(refreshTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> {
                     authorize
@@ -60,6 +59,7 @@ public class SecurityConfig {
                 })
                 .exceptionHandling(exception -> {
                     exception.authenticationEntryPoint((req, resp, e) -> {
+//                        This exception occurred when a user try to access a secured path without Authentication.
                         log.error("Exception occurred while authenticating the user: {} at path {}", e.getMessage(), req.getRequestURI());
                         throw new InvalidAuthenticationException("Invalid authentication attempt");
                     });

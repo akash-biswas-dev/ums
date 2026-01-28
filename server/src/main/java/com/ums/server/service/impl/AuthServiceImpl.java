@@ -5,7 +5,9 @@ import com.ums.server.dtos.requests.UserCredentials;
 import com.ums.server.dtos.response.Authorization;
 import com.ums.server.dtos.response.UserResponse;
 import com.ums.server.exceptions.InvalidCredentialsException;
+import com.ums.server.exceptions.UserLockedException;
 import com.ums.server.exceptions.UserNotFoundException;
+import com.ums.server.exceptions.UserProfileNotCompleteException;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.service.AuthService;
 import com.ums.server.service.JwtService;
@@ -20,58 +22,37 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final JwtService jwtService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public JwtAuthorization generateJwtCookie(UserCredentials userCredentials, Boolean rememberMe) {
 
+    @Override
+    public UmsUsers authenticate(UserCredentials userCredentials) {
         final UmsUsers user;
         try {
-            user = userService.loadUserByEmail(userCredentials.email());
+            user = userService.getUserByEmail(userCredentials.email());
         } catch (UserNotFoundException ex) {
             log.error("User not found with email: {}", ex.getMessage());
-            throw new InvalidCredentialsException("Invalid email or password");
+            throw new InvalidCredentialsException("Invalid username");
         }
 
-        boolean isPasswordMatches = passwordEncoder.matches(userCredentials.password(), user.getPassword());
+        String encodedUserPassword = user.getPassword();
 
-        if (!isPasswordMatches) {
-            log.error("Invalid password");
-            throw new InvalidCredentialsException("Invalid password");
+        if (!passwordEncoder.matches(userCredentials.password(), encodedUserPassword)) {
+            log.error("Invalid password provided by user: {}", userCredentials.password());
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        Authorization authorization = new Authorization(
-                jwtService.generateToken(user),
-                getUserResponse(user)
-        );
-
-        if (rememberMe) {
-            Integer age = jwtService.getMaxAge();
-            String token = jwtService.generateSession(user.getId(), true);
-            return new JwtAuthorization(token, age, authorization);
+        if (user.getIsLocked()) {
+            log.error("Access locked for user: {}", user.getId());
+            throw new UserLockedException("Profile locked.");
         }
 
-        return new JwtAuthorization(
-                jwtService.generateSession(user.getId(), false),
-                jwtService.getAge(),
-                authorization
-        );
+        if (!user.getIsProfileCompleted()) {
+            log.warn("Profile not completed for user: {}", user.getId());
+            throw new UserProfileNotCompleteException("User profile not complete yet.");
+        }
+        return user;
     }
 
-    @Override
-    public Authorization generateAuthTokens(String userId) {
-        UmsUsers users = userService.loadUserById(userId);
-        String token = jwtService.generateToken(users);
-        UserResponse userResponse = getUserResponse(users);
-        return new Authorization(token, userResponse);
-    }
-
-    private UserResponse getUserResponse(UmsUsers umsUsers) {
-        return new UserResponse(
-                umsUsers.getFirstName(),
-                umsUsers.getLastName()
-        );
-    }
 }

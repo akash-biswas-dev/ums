@@ -6,7 +6,6 @@ ums:
     refresh-expiration: 1296000000
   admin:
     email: abc@email.com
-    role: "Super Admin"
 server:
   port: 8501
 spring:
@@ -16,7 +15,7 @@ spring:
   datasource:
     username: dev
     password: password
-    url: jdbc:mysql://localhost:3306/ums-db
+    url: jdbc:mysql://localhost:3306/ums-db-dev
   jpa:
     hibernate:
       ddl-auto: none

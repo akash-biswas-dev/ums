@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface JwtService {
 
-    UserDetails extractAuthentication(String token);
+    UserDetails extractAuthentication(String token) throws RuntimeException;
 
     String generateToken(UmsUsers umsUsers);
 
@@ -15,5 +15,9 @@ public interface JwtService {
 
     Integer getMaxAge();
 
-    String extractUserId(String session);
+    Integer getProfileUpdateSessionAge();
+
+    String extractUserId(String session) throws RuntimeException;
+
+    String generateTemporaryToken(String userId);
 }

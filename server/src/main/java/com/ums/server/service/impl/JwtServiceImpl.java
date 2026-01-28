@@ -1,18 +1,13 @@
 package com.ums.server.service.impl;
 
-import com.ums.server.exceptions.JwtException;
-import com.ums.server.exceptions.JwtTokenExpiredException;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.service.JwtService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -24,27 +19,18 @@ import java.util.function.Function;
 public class JwtServiceImpl implements JwtService {
     private final String issuer;
     private final String secret;
-    private final Integer accessWindow;
-    private final Long expiration;
-    private final Long maxExpiration;
+    private final int accessWindow;
+    private final int sessionAge;
+    private final int sessionMaxAge;
+    private final int updateProfileSessionExpiry;
 
     private static final String PERMISSION = "permissions";
 
 
     @Override
-    public UserDetails extractAuthentication(String token) {
-        final Claims claims;
-        try {
-            claims = extractAllClaims(token);
-        } catch (ExpiredJwtException e) {
-            System.out.println(e.getHeader());
-            throw new JwtTokenExpiredException("Token Expired.");
-        } catch (Exception e) {
-            throw new JwtException("Invalid token");
-        }
+    public UserDetails extractAuthentication(String token) throws RuntimeException {
+        final Claims claims = extractAllClaims(token);
         String subject = claims.getSubject();
-
-
         return User.builder()
                 .username(subject)
                 .password("no-password")
@@ -63,23 +49,34 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateSession(String userId, Boolean rememberMe) {
-        Long age = rememberMe ? maxExpiration : expiration;
-        return buildToken(new HashMap<>(), userId, age);
+        int age = rememberMe ? sessionMaxAge : sessionAge;
+        return buildToken(new HashMap<>(), userId, age * 1000L);
     }
 
     @Override
     public Integer getAge() {
-        return (int) expiration.longValue() / 1000;
+        return sessionAge;
     }
 
     @Override
     public Integer getMaxAge() {
-        return (int) maxExpiration.longValue() / 1000;
+        return sessionMaxAge;
     }
 
     @Override
-    public String extractUserId(String session) {
+    public Integer getProfileUpdateSessionAge() {
+        return updateProfileSessionExpiry;
+    }
+
+    @Override
+    public String extractUserId(String session) throws RuntimeException {
         return extractClaim(session, Claims::getSubject);
+    }
+
+    @Override
+    public String generateTemporaryToken(String userId) {
+//       Build a token which have only subject with 1 hour expiration.
+        return buildToken(new HashMap<>(), userId, updateProfileSessionExpiry * 1000L);
     }
 
     private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -99,13 +96,13 @@ public class JwtServiceImpl implements JwtService {
                 .getBody();
     }
 
-    private String buildToken(Map<String, Object> claims, String userId, Long age) {
+    private String buildToken(Map<String, Object> claims, String userId, Long ageInMillis) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userId)
                 .setIssuer(issuer)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + age))
+                .setExpiration(new Date(System.currentTimeMillis() + ageInMillis))
                 .signWith(getSignKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

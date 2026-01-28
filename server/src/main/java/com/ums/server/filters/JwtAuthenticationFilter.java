@@ -1,12 +1,12 @@
 package com.ums.server.filters;
 
-import com.ums.server.exceptions.JwtSessionExpiredException;
-import com.ums.server.exceptions.JwtTokenExpiredException;
+import com.ums.server.exceptions.InvalidAuthorizationException;
+import com.ums.server.exceptions.JwtAuthorizationExpired;
 import com.ums.server.service.JwtService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -14,16 +14,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Optional;
 
 
 @Slf4j
@@ -47,9 +43,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = authorization.substring(7);
+        final UserDetails user;
 
-        UserDetails user = jwtService.extractAuthentication(token);
-
+        try {
+            user = jwtService.extractAuthentication(token);
+        } catch (ExpiredJwtException ex) {
+            Claims claims = ex.getClaims();
+            log.error("Authorization expired for user: {}",claims.getSubject());
+            throw new JwtAuthorizationExpired("Authorization expired.");
+        } catch (Exception ex) {
+            log.error("Invalid jwt authorization.");
+            throw new InvalidAuthorizationException("Invalid authorization.");
+        }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 user.getUsername(), "no-password", user.getAuthorities()
         );

@@ -1,8 +1,7 @@
 package com.ums.server.service;
 
 import com.ums.server.exceptions.JwtException;
-import com.ums.server.exceptions.JwtTokenExpiredException;
-import com.ums.server.models.permission.SystemPermissions;
+import com.ums.server.exceptions.JwtAuthorizationExpired;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.service.impl.JwtServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,9 +27,9 @@ class JwtServiceTest {
                 "localhost",
                 "59703373367639792F423F452848284D625165546857",
                 300,
-                86400000L,
-                86400000L
-        );
+                86400,
+                1296000,
+                3600);
         this.user = UmsUsers.builder()
                 .id(UUID.randomUUID().toString())
                 .email("admin@gmail.com")
@@ -62,12 +60,13 @@ class JwtServiceTest {
                 "localhost",
                 "59703373367639792F423F452848284D625165546857",
                 1,
-                100L,
-                300L);
+                86400,
+                1296000,
+                3600);
         String token = tempService.generateToken(user);
         Thread.sleep(2000);
 
-        assertThrows(JwtTokenExpiredException.class, () -> {
+        assertThrows(JwtAuthorizationExpired.class, () -> {
             tempService.extractAuthentication(token);
         });
     }
@@ -78,8 +77,9 @@ class JwtServiceTest {
                 "localhost",
                 "452848284D62516554685759703373367639792F423F",
                 300,
-                86400000L,
-                86400000L);
+                86400,
+                1296000,
+                3600);
         String token = jwtService.generateToken(user);
         assertThrows(JwtException.class, () -> {
             tempService.extractAuthentication(token);

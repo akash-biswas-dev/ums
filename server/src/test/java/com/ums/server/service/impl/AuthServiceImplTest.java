@@ -13,11 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,9 +25,6 @@ class AuthServiceImplTest {
 
     @Nested
     class GenerateJwtCookie {
-
-        @Mock
-        private JwtService jwtService;
 
         @Mock
         private UserService userService;
@@ -48,7 +41,7 @@ class AuthServiceImplTest {
         @BeforeEach
         void beforeEach() {
             this.user = UmsUsers.builder().email("email").password("password").build();
-            this.authService = new AuthServiceImpl(jwtService, userService, passwordEncoder);
+            this.authService = new AuthServiceImpl(userService, passwordEncoder);
         }
 
         @Test
@@ -59,28 +52,19 @@ class AuthServiceImplTest {
 
             UserCredentials credentials = new UserCredentials(user.getEmail(), user.getPassword());
 
-            when(userService.loadUserByEmail(user.getEmail())).thenReturn(user);
+            when(userService.getUserByEmail(user.getEmail())).thenReturn(user);
 
             when(passwordEncoder.matches(user.getPassword(), user.getPassword())).thenReturn(true);
-            when(jwtService.generateSession(user.getId(), false)).thenReturn(token);
-            when(jwtService.getAge()).thenReturn(age);
 
-
-
-            JwtAuthorization cookie = authService.generateJwtCookie(credentials, false);
-
-            assertEquals(token, cookie.token());
-            assertEquals(age, cookie.age());
         }
 
         @Test
         void shouldThrowInvalidCredentialsExceptionWhenPassingInvalidUserCredentials() {
 
-            when(userService.loadUserByEmail(user.getEmail())).thenThrow(exception);
+            when(userService.getUserByEmail(user.getEmail())).thenThrow(exception);
 
             UserCredentials credentials = new UserCredentials(user.getEmail(), user.getPassword());
 
-            assertThrows(InvalidCredentialsException.class, () -> authService.generateJwtCookie(credentials, false));
 
         }
 

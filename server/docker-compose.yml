@@ -8,7 +8,7 @@ services:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_USER=dev
       - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=ums-db
+      - MYSQL_DATABASE=ums-db-dev
   redis:
     container_name: ums-session-storage
     image: redis:8.4.0-bookworm

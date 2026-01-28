@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
     @NonNull
     @Override
-    public UmsUsers loadUserByEmail(@NonNull String email) throws UserNotFoundException {
+    public UmsUsers getUserByEmail(@NonNull String email) throws UserNotFoundException {
         Optional<UmsUsers> userOptional = userRepository.findByEmailIgnoreCase(email);
 
         if (userOptional.isEmpty()) {
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UmsUsers loadUserById(@NonNull String userId) throws UsernameNotFoundException {
+    public UmsUsers getUserById(@NonNull String userId) throws UserNotFoundException{
 
         Optional<UmsUsers> userOptional = userRepository.findById(userId);
 
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
                     .findAllPermissionsByRoleId(roleId.roleId())
                     .forEach(institutionPermissionDTO -> {
                         String institutionCode = institutionPermissionDTO.institutionCode();
-//                       If find a new Institution code then add a new HashSet.
+//                       If found a new Institution code then add a new HashSet.
                         if (!institutionPermissions.containsKey(institutionCode)) {
                             institutionPermissions.put(institutionCode, new HashSet<>());
                         }

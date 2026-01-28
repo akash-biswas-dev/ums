@@ -2,7 +2,10 @@ package com.ums.server.exceptions.handler;
 
 import com.ums.server.dtos.ErrorCode;
 import com.ums.server.dtos.response.ErrorResponse;
-import com.ums.server.exceptions.*;
+import com.ums.server.exceptions.InvalidAuthenticationException;
+import com.ums.server.exceptions.InvalidCredentialsException;
+import com.ums.server.exceptions.JwtAuthorizationExpired;
+import com.ums.server.exceptions.SessionExpiredException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -17,22 +20,23 @@ import java.io.IOException;
 
 
 @Slf4j
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
+@Order(value = Ordered.HIGHEST_PRECEDENCE)
 public class AuthExceptionHandle {
-    @ExceptionHandler(JwtSessionExpiredException.class)
+
+    @ExceptionHandler(SessionExpiredException.class)
     public void expiredSessionExceptionHandle(HttpServletResponse response) throws IOException {
         response.sendRedirect("/auth");
     }
 
-    @ExceptionHandler(value = {JwtException.class, InvalidAuthenticationException.class})
+    @ExceptionHandler(value = {InvalidAuthenticationException.class})
     public ResponseEntity<ErrorResponse> jwtTokenExceptionHandle(RuntimeException e) {
         return new ResponseEntity<>(new ErrorResponse(ErrorCode.AUTHENTICATION_ERROR, e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(JwtTokenExpiredException.class)
-    public ResponseEntity<ErrorResponse> expiredTokenExceptionHandle(JwtTokenExpiredException e) {
-        return new ResponseEntity<>(new ErrorResponse(ErrorCode.TOKEN_EXPIRED, e.getMessage()), HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler(JwtAuthorizationExpired.class)
+    public ResponseEntity<ErrorResponse> expiredTokenExceptionHandle(JwtAuthorizationExpired e) {
+        return new ResponseEntity<>(new ErrorResponse(ErrorCode.AUTHORIZATION_EXPIRED, e.getMessage()), HttpStatus.UNAUTHORIZED);
     }
 
 
@@ -46,12 +50,5 @@ public class AuthExceptionHandle {
     public ResponseEntity<ErrorResponse> handleException(AuthorizationDeniedException e) {
         ErrorResponse response = new ErrorResponse(ErrorCode.ACCESS_DENIED,e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
-    }
-
-    @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        log.error(e.getMessage(), e);
-        ErrorResponse response = new ErrorResponse(ErrorCode.UNKNOWN_CAUSE,"Some internal error occurred.");
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

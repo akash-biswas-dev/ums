@@ -18,9 +18,11 @@ public class JwtConfig {
     JwtService jwtService() {
         String secret = environment.getProperty("ums.jwt.secret");
         String issuer = environment.getProperty("ums.jwt.issuer");
-        Integer accessWindow = 60 * 5; // 5 min
-        Long expiration = environment.getProperty("ums.jwt.expiration", Long.class);
-        Long maxExpiration = environment.getProperty("ums.jwt.refresh-expiration", Long.class);
-        return new JwtServiceImpl(issuer, secret, accessWindow, expiration, maxExpiration);
+        int accessWindow = 60 * 5; // 5 min
+
+        int expiration = environment.getProperty("ums.jwt.expiration", Integer.class, 86400);
+        int maxExpiration = environment.getProperty("ums.jwt.refresh-expiration", Integer.class, 1296000);
+        int updateProfileSessionAge = 3600; // 1 hour
+        return new JwtServiceImpl(issuer, secret, accessWindow, expiration, maxExpiration, updateProfileSessionAge);
     }
 }

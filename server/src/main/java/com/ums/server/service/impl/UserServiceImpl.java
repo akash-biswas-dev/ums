@@ -2,6 +2,8 @@ package com.ums.server.service.impl;
 
 import com.ums.server.dtos.db.RoleIdDTO;
 import com.ums.server.dtos.db.RoleSystemPermissionDTO;
+import com.ums.server.dtos.requests.UserProfileRequest;
+import com.ums.server.exceptions.ServiceUnavailableException;
 import com.ums.server.exceptions.UserNotFoundException;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.models.permission.InstitutionPermission;
@@ -13,12 +15,14 @@ import com.ums.server.repository.UserRoleRepository;
 import com.ums.server.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -52,6 +56,32 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException(userId);
         }
         return updateUserPermissions(userOptional.get());
+    }
+
+    @Override
+    public UmsUsers updateProfile(String userId, UserProfileRequest profileRequest) throws IllegalAccessException {
+        /*Optional<UmsUsers> usersOptional = userRepository.findById(userId);
+
+        if(usersOptional.isEmpty()){
+            log.error("Invalid User found while updating profile with id: {}", userId);
+            throw new ServiceUnavailableException("Try to contact the administrator.");
+        }
+
+        UmsUsers user = usersOptional.get();
+*/
+
+        Field[] profileFields = UserProfileRequest.class.getDeclaredFields();
+
+        for (Field filed : profileFields){
+            String profileRequestValue = filed.get(profileRequest);
+            filed.set(user,);
+        }
+
+        for (Field f : fields){
+            System.out.println(f);
+        }
+
+        return null;
     }
 
     private UmsUsers updateUserPermissions(UmsUsers umsUsers) {

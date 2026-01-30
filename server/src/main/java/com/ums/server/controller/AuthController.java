@@ -10,6 +10,7 @@ import com.ums.server.models.UmsUsers;
 import com.ums.server.service.AuthService;
 import com.ums.server.service.JwtService;
 import com.ums.server.service.UserService;
+import com.ums.server.utils.UsersUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
@@ -88,13 +89,9 @@ public class AuthController {
     }
 
 
+    //        Generate authorization for the user.
     private ResponseEntity<Authorization> generateUserResponse(UmsUsers user) {
-//        Generate authorization for the user.
-        UserResponse userResponse =
-                new UserResponse(
-                        user.getFirstName(),
-                        user.getLastName()
-                );
+        UserResponse userResponse = UsersUtils.buildUserResponse(user);
         String authorizationToken = jwtService.generateToken(user);
         Authorization authorization = new Authorization(
                 authorizationToken,

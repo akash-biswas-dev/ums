@@ -37,8 +37,9 @@ public class SecurityConfig {
             "/vite.svg"
     };
 
-    private static final String [] WHITE_LIST_API_ENDPOINTS={
-      "/api/v1/auth"
+    private static final String[] WHITELIST_API_ENDPOINTS = {
+            "/api/v1/auth",
+            "/api/v1/users/**"
     };
 
     @Bean
@@ -55,7 +56,10 @@ public class SecurityConfig {
                     authorize
                             .requestMatchers(WHITELIST)
                             .permitAll()
-                            .anyRequest().authenticated();
+                            .requestMatchers(WHITELIST_API_ENDPOINTS)
+                            .permitAll()
+                            .anyRequest()
+                            .authenticated();
                 })
                 .exceptionHandling(exception -> {
                     exception.authenticationEntryPoint((req, resp, e) -> {

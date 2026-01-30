@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class JwtServiceTest {
+class JwtServiceImplTest {
 
     private JwtService jwtService;
     private UmsUsers user;

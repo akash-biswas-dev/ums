@@ -1,5 +1,6 @@
 package com.ums.server.exceptions.handler;
 
+import com.ums.server.controller.UsersController;
 import com.ums.server.exceptions.UserProfileNotCompleteException;
 import com.ums.server.service.JwtService;
 import jakarta.servlet.http.Cookie;
@@ -21,12 +22,13 @@ public class UserProfileNotCompleteExceptionHandle {
 
     private final JwtService jwtService;
 
+    //    Generate a temporary session which user can only update the user profile then user can access tokens the resources.
     @ExceptionHandler(UserProfileNotCompleteException.class)
     public void userProfileNotCompleteExceptionHandle(
             UserProfileNotCompleteException ex,
             HttpServletResponse response) throws IOException {
         String session = jwtService.generateTemporaryToken(ex.getUserId());
-        Cookie cookie = new Cookie("updateprofile",session);
+        Cookie cookie = new Cookie(UsersController.PROFILE_SESSION, session);
         cookie.setMaxAge(jwtService.getProfileUpdateSessionAge());
         cookie.setHttpOnly(true);
         cookie.setPath(UPDATE_PROFILE_PATH);

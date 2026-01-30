@@ -7,11 +7,14 @@ import com.ums.server.repository.RoleSystemPermissionRepository;
 import com.ums.server.repository.UmsUserRepository;
 import com.ums.server.repository.UserRoleRepository;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 
@@ -45,6 +48,17 @@ class UserServiceImplTest {
 
     @Nested
     class GetUmsUserWithPermissionsById {
+
+    }
+
+    @Test
+    void someTest(){
+        Field[] fields = UmsUsers.class.getDeclaredFields();
+
+        System.out.println(fields.length);
+        for (Field f :fields){
+            System.out.println(f.getName());
+        }
 
     }
 }

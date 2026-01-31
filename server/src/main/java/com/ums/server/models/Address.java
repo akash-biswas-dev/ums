@@ -5,9 +5,15 @@ import com.ums.server.models.address.Country;
 import com.ums.server.models.address.District;
 import com.ums.server.models.address.State;
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "address")
+@Setter
+@Getter
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

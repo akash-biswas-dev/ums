@@ -6,8 +6,13 @@ import com.ums.server.dtos.ErrorCode;
 import com.ums.server.exceptions.JwtAuthorizationExpired;
 import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.JwtAuthenticationFilter;
+import com.ums.server.filters.UpdateProfileSessionAuthorizationFilter;
 import com.ums.server.service.JwtService;
 import com.ums.server.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +28,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SecureRestEndpoint.class)
-@Import({SecurityConfig.class, JwtAuthenticationFilter.class, FilterChainExceptionHandler.class})
+@Import({SecurityConfig.class, JwtAuthenticationFilter.class, FilterChainExceptionHandler.class, UpdateProfileSessionAuthorizationFilter.class})
 class SecuredRestEndpointTest {
 
     private final static String BASE_URL = "/api/v1/secured";
@@ -71,7 +77,13 @@ class SecuredRestEndpointTest {
     void shouldSendRedirectWhenTheTokenIsExpired() throws Exception {
 
         String token = "a-long-token";
-        when(jwtService.extractAuthentication(token)).thenThrow(new JwtAuthorizationExpired("Token has expired"));
+
+        Claims claims = new DefaultClaims();
+        claims.setSubject("user-id");
+        when(jwtService.extractAuthentication(token)).thenThrow(
+                new ExpiredJwtException(any(Header.class),
+                        claims,
+                        "Token expired."));
 
         mockMvc.perform(get(BASE_URL).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isUnauthorized())
@@ -82,8 +94,6 @@ class SecuredRestEndpointTest {
 
     @Test
     void shouldGet403WhenAccessSecuredEndpointWithoutEnoughPermission() throws Exception {
-
-
         when(jwtService.extractAuthentication(token)).thenReturn(user);
 
         mockMvc.perform(get(BASE_URL + "/permission")

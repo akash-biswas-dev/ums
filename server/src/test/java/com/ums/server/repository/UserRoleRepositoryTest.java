@@ -25,12 +25,6 @@ class UserRoleRepositoryTest {
     @Autowired
     private UserRoleRepository userRoleRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
-    private UmsUserRepository userRepository;
-
     private Map<String,List<String>> rolesUserHave;
 
     @BeforeEach

@@ -1,6 +1,7 @@
 package com.ums.server.service;
 
 
+import com.ums.server.dtos.requests.AddressRequest;
 import com.ums.server.dtos.requests.UserProfileRequest;
 import com.ums.server.dtos.response.UserResponse;
 import com.ums.server.exceptions.UserNotFoundException;
@@ -14,7 +15,5 @@ public interface UserService  {
 
     UmsUsers getUserById(@NonNull String userId) throws UserNotFoundException;
 
-    UmsUsers updateProfile(String userId, UserProfileRequest profileRequest) throws IllegalAccessException;
-
-
+    UmsUsers updateProfile(String userId, UserProfileRequest profileRequest);
 }

@@ -3,6 +3,7 @@ package com.ums.server.config;
 import com.ums.server.exceptions.InvalidAuthenticationException;
 import com.ums.server.filters.FilterChainExceptionHandler;
 import com.ums.server.filters.JwtAuthenticationFilter;
+import com.ums.server.filters.UpdateProfileSessionAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ public class SecurityConfig {
 
     private final FilterChainExceptionHandler exceptionHandler;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final UpdateProfileSessionAuthorizationFilter profileSessionAuthorizationFilter;
 
     private static final String[] WHITELIST = {
             "/index.html",
@@ -51,6 +53,7 @@ public class SecurityConfig {
                 .cors(CorsConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(exceptionHandler, LogoutFilter.class)
+                .addFilterBefore(profileSessionAuthorizationFilter,UsernamePasswordAuthenticationFilter.class)
                 .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> {
                     authorize

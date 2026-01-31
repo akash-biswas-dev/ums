@@ -4,12 +4,14 @@ package com.ums.server.controller;
 import com.ums.server.dtos.requests.UserCredentials;
 import com.ums.server.dtos.response.Authorization;
 import com.ums.server.dtos.response.UserResponse;
+import com.ums.server.exceptions.IllegalJwtException;
 import com.ums.server.exceptions.InvalidSession;
 import com.ums.server.exceptions.SessionExpiredException;
 import com.ums.server.models.UmsUsers;
 import com.ums.server.service.AuthService;
 import com.ums.server.service.JwtService;
 import com.ums.server.service.UserService;
+import com.ums.server.utils.HttpUtils;
 import com.ums.server.utils.UsersUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -23,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -34,6 +37,8 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
     private final UserService userService;
+
+    private static final String SESSION = "session";
 
 
     @PostMapping
@@ -61,27 +66,26 @@ public class AuthController {
     public ResponseEntity<Authorization> refreshToken(
             HttpServletRequest request
     ) {
-        Optional<Cookie> sessionCookieOptional = Arrays.stream(request.getCookies())
-                .filter((cookie) -> cookie.getName().equals("session"))
-                .findFirst();
-        if (sessionCookieOptional.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Cookie session = sessionCookieOptional.get();
-
-        if (!session.isHttpOnly()) {
+        Cookie sessionCookie = HttpUtils.getCookie(request.getCookies(),SESSION);
+        if(!sessionCookie.isHttpOnly()){
             log.error("Trying to generate Authorization with untrusted source.");
             throw new InvalidSession("Untrusted session data.");
+        }
+        if(Objects.isNull(sessionCookie.getValue()) || sessionCookie.getValue().isEmpty()) {
+            log.error("Found a null or empty session.");
+            throw new InvalidSession("Invalid cookie.");
         }
 
         final String userId;
         try {
-            userId = jwtService.extractUserId(session.getValue());
+            userId = jwtService.extractUserId(sessionCookie.getValue());
         } catch (ExpiredJwtException exception) {
             Claims claims = exception.getClaims();
             log.error("Session expired for user : {}", claims.getSubject());
             throw new SessionExpiredException("Session expired.");
+        }catch (Exception ex){
+            log.error("Invalid jwt found.");
+            throw new IllegalJwtException("Invalid Jwt token found.");
         }
         UmsUsers user = userService.getUserById(userId);
 

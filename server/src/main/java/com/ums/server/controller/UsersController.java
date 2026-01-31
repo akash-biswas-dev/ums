@@ -34,33 +34,15 @@ public class UsersController {
     @PutMapping(value = "/profile")
     public ResponseEntity<UserResponse> updateProfile(
             @RequestBody UserProfileRequest profileRequest,
-            Authentication authentication,
-            HttpServletRequest request
+            Authentication authentication
     ) {
+        String userId = (String) authentication.getPrincipal();
 
-        /*String userId = null;
-        if (authentication == null) {
-            Optional<Cookie> tempProfileUpdateSession = Arrays.stream(request.getCookies())
-                    .filter(cookie -> cookie.getName().equals(PROFILE_SESSION)).findFirst();
-
-            if (tempProfileUpdateSession.isPresent() &&
-                    tempProfileUpdateSession.get().isHttpOnly()
-            ) {
-                Cookie sessionCookie = tempProfileUpdateSession.get();
-                userId = jwtService.extractUserId(sessionCookie.getValue());
-            }
-        } else {
-            userId = (String) authentication.getPrincipal();
-        }
-
-        if (Objects.isNull(userId)) {
-            throw new InvalidAuthenticationException("No authentication provided.");
-        }*/
-
-        UmsUsers user = userService.updateProfile(null, profileRequest);
+        UmsUsers user = userService.updateProfile(userId, profileRequest);
 
         UserResponse userResponse = UsersUtils.buildUserResponse(user);
 
         return new ResponseEntity<>(userResponse, HttpStatus.ACCEPTED);
     }
+
 }

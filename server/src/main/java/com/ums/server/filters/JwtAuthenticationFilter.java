@@ -1,6 +1,6 @@
 package com.ums.server.filters;
 
-import com.ums.server.exceptions.InvalidAuthorizationException;
+import com.ums.server.exceptions.IllegalJwtException;
 import com.ums.server.exceptions.JwtAuthorizationExpired;
 import com.ums.server.service.JwtService;
 import io.jsonwebtoken.Claims;
@@ -35,6 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain) throws ServletException, IOException {
 
+        if(SecurityContextHolder.getContext().getAuthentication() != null){
+            filterChain.doFilter(request,response);
+            return;
+        }
         String authorization = request.getHeader("Authorization");
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -53,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throw new JwtAuthorizationExpired("Authorization expired.");
         } catch (Exception ex) {
             log.error("Invalid jwt authorization.");
-            throw new InvalidAuthorizationException("Invalid authorization.");
+            throw new IllegalJwtException("Invalid authorization.");
         }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 user.getUsername(), "no-password", user.getAuthorities()

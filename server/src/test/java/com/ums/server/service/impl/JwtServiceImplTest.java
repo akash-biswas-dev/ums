@@ -1,9 +1,10 @@
-package com.ums.server.service;
+package com.ums.server.service.impl;
 
-import com.ums.server.exceptions.JwtException;
-import com.ums.server.exceptions.JwtAuthorizationExpired;
 import com.ums.server.models.UmsUsers;
-import com.ums.server.service.impl.JwtServiceImpl;
+import com.ums.server.service.JwtService;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +50,7 @@ class JwtServiceImplTest {
 
     @Test
     void shouldThrowExceptionWhenTokenIsInvalid() {
-        assertThrows(JwtException.class, () -> {
+        assertThrows(MalformedJwtException.class, () -> {
             jwtService.extractAuthentication("invalid");
         });
     }
@@ -66,7 +67,7 @@ class JwtServiceImplTest {
         String token = tempService.generateToken(user);
         Thread.sleep(2000);
 
-        assertThrows(JwtAuthorizationExpired.class, () -> {
+        assertThrows(ExpiredJwtException.class, () -> {
             tempService.extractAuthentication(token);
         });
     }
@@ -81,7 +82,7 @@ class JwtServiceImplTest {
                 1296000,
                 3600);
         String token = jwtService.generateToken(user);
-        assertThrows(JwtException.class, () -> {
+        assertThrows(SignatureException.class, () -> {
             tempService.extractAuthentication(token);
         });
     }
